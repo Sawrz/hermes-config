@@ -41,10 +41,12 @@ in
       skills,
       providers,
       nativeJobs ? { },
+      selectionDeclarations ? [ ],
     }:
     {
       schema_version = 2;
       inherit profile;
+      profile_declarations = map declaration (lib.unique selectionDeclarations);
       native_jobs = lib.mapAttrs (name: job: {
         provider = providers."cron:${name}";
         declarations = map declaration (lib.unique (job.declarationFiles or [ ]));

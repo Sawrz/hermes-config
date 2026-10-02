@@ -22,6 +22,7 @@ class RequestTests(unittest.TestCase):
         self.manifest = {
             "schema_version": 2,
             "profile": "alpha",
+            "profile_declarations": [],
             "native_jobs": {},
             "skills": {
                 "example": {
@@ -78,6 +79,31 @@ class RequestTests(unittest.TestCase):
             }
         ]
         self.assertIn("Repository: nixos/nix-config", self.plan()["arguments"]["body"])
+
+    def test_reusable_skill_selection_routes_to_host_without_changing_implementation_owner(self):
+        self.manifest["profile_declarations"] = [
+            {
+                "repository": "nixos/nix-config",
+                "path": "hosts/host.nix",
+                "route": {
+                    "repository": "nixos/nix-config",
+                    "board": "homelab-devops",
+                    "assignee": "homelab-cto",
+                    "mode": "manual",
+                },
+            }
+        ]
+        implementation = self.plan()["arguments"]["idempotency_key"]
+        self.request.update(change_target="selection", repository="nixos/nix-config")
+        selection = self.plan()
+        self.assertEqual(selection["repository"], "nixos/nix-config")
+        self.assertIn("hosts/host.nix", selection["body"])
+        self.assertNotEqual(selection["idempotency_key"], implementation)
+        self.manifest["profile"] = "other-profile"
+        self.assertNotEqual(self.plan()["idempotency_key"], selection["idempotency_key"])
+        self.request["repository"] = "nixos/hermes-config"
+        with self.assertRaisesRegex(ValueError, "does not own"):
+            self.plan()
 
     def test_ambiguous_ownership_requires_explicit_selection(self):
         skill = self.manifest["skills"]["example"]

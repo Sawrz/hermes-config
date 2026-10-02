@@ -14,6 +14,8 @@ def plan(manifest, skill, request, known_task=None, current_task=None, resource_
         or manifest["schema_version"] != 2
         or not isinstance(manifest.get("profile"), str)
         or not manifest["profile"]
+        or not isinstance(manifest.get("profile_declarations"), list)
+        or not all(isinstance(v, dict) for v in manifest["profile_declarations"])
         or not isinstance(manifest.get("skills"), dict)
         or not isinstance(manifest.get("native_jobs"), dict)
         or resource_kind not in ("skills", "native_jobs")
@@ -49,7 +51,20 @@ def plan(manifest, skill, request, known_task=None, current_task=None, resource_
             "note": "Unlisted, not permission to edit: confirm native provenance, contract and user authority",
         }
     entry = manifest[resource_kind][skill]
-    origins = [entry["source"]] if entry["source"].get("repository") else entry["declarations"]
+    change_target = (
+        request.get("change_target", "implementation")
+        if isinstance(request, dict)
+        else "implementation"
+    )
+    if change_target not in ("implementation", "selection"):
+        raise ValueError("Change target must be implementation or selection")
+    origins = (
+        manifest["profile_declarations"]
+        if change_target == "selection"
+        else [entry["source"]]
+        if entry["source"].get("repository")
+        else entry["declarations"]
+    )
     routes = {
         origin["repository"]: origin["route"]
         for origin in origins
@@ -92,9 +107,10 @@ def plan(manifest, skill, request, known_task=None, current_task=None, resource_
         raise ValueError("Request needs change, reason, nonempty evidence and acceptance")
     # Adding the explicit default must not invalidate existing Kanban request keys.
     identity_route = {k: v for k, v in route.items() if k != "mode"} if mode == "kanban" else route
-    identity = json.dumps(
-        [identity_route, resource_kind, skill, request["change"].strip()], sort_keys=True
-    )
+    identity_parts = [identity_route, resource_kind, skill, request["change"].strip()]
+    if change_target == "selection":
+        identity_parts += [change_target, manifest["profile"]]
+    identity = json.dumps(identity_parts, sort_keys=True)
     key = "managed-resource-" + hashlib.sha256(identity.encode()).hexdigest()
     if mode == "manual" and (known_task is not None or current_task is not None):
         raise ValueError("Manual handoff does not accept Kanban task references")
@@ -122,6 +138,8 @@ def plan(manifest, skill, request, known_task=None, current_task=None, resource_
             f"Managed-resource change key: {key}",
             f"Repository: {route['repository']}",
             f"Resource: {resource_kind}/{skill}",
+            f"Change target: {change_target}",
+            "Selected source ownership: " + json.dumps(origins, sort_keys=True),
             "Source/declaration: " + json.dumps(entry, sort_keys=True),
             f"Requested change: {request['change']}",
             f"Reason: {request['reason']}",

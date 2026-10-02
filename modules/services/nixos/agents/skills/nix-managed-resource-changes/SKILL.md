@@ -71,7 +71,12 @@ The optional read-only helper prepares a handoff or native Kanban payload:
 `/run/hermes-capabilities/nix-managed-resource-changes/scripts/change_request.py`.
 Use `python3 .../change_request.py --help`. Select `--skill NAME` or `--job NAME`
 and supply a JSON request with `change`, `reason`, and nonempty `evidence` and
-`acceptance` lists. No secrets. The helper performs no network or board writes.
+`acceptance` lists. For a profile's selection/configuration rather than an
+implementation change, set `change_target` to `selection` and select the owning
+`repository` from `profile_declarations`; these refer to the effective profile
+selection source. Implementation is the default and follows the resource's own
+source. Selection requests include the profile identity so the same skill selected
+by two profiles does not collapse into one request. No secrets. The helper performs no network or board writes.
 
 1. If already assigned this change, read the task with native
    `kanban_show(board=route.board, task_id=...)`. Implement under the repository's

@@ -131,6 +131,7 @@ let
           skills = profileEffectiveDeclarativeSkills profile;
           providers = (profileCapabilityClosure profile).provenance;
           nativeJobs = profileNativeJobs profile;
+          selectionDeclarations = profile.selectionDeclarationFiles or [ ];
         }
       )
     );
@@ -1906,25 +1907,42 @@ let
     id: !(capabilityPackageValid id cfg.capabilityPackages.${id})
   ) (builtins.attrNames cfg.capabilityPackages);
 
-  capabilityProfileOptions = types.submodule {
-    options = {
-      agentSkills = mkOption {
-        type = types.attrsOf types.bool;
-        default = { };
-        description = "Explicit portable skill or skill-bundle capability roots.";
+  capabilityProfileOptions = types.submodule (
+    { options, ... }: {
+      options = {
+        selectionDeclarationFiles = mkOption {
+          type = types.listOf types.str;
+          internal = true;
+          readOnly = true;
+          description = "Effective source declarations selecting this profile’s capabilities.";
+        };
+        agentSkills = mkOption {
+          type = types.attrsOf types.bool;
+          default = { };
+          description = "Explicit portable skill or skill-bundle capability roots.";
+        };
+        externalServices = mkOption {
+          type = externalServicesType;
+          default = { };
+          description = "Profile-scoped external-service capability roots and command-time files.";
+        };
+        serviceIntegrations = mkOption {
+          type = types.attrsOf serviceIntegrationSelectionType;
+          default = { };
+          description = "Explicit directional integration capability roots.";
+        };
       };
-      externalServices = mkOption {
-        type = externalServicesType;
-        default = { };
-        description = "Profile-scoped external-service capability roots and command-time files.";
-      };
-      serviceIntegrations = mkOption {
-        type = types.attrsOf serviceIntegrationSelectionType;
-        default = { };
-        description = "Explicit directional integration capability roots.";
-      };
-    };
-  };
+      config.selectionDeclarationFiles = unique (
+        concatLists (
+          map (option: map (definition: definition.file) option.definitionsWithLocations) [
+            options.agentSkills
+            options.externalServices
+            options.serviceIntegrations
+          ]
+        )
+      );
+    }
+  );
 
   profileOptions = types.submodule (
     { name, ... }:
