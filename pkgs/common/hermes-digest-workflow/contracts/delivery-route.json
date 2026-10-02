@@ -1,0 +1,10 @@
+{
+  "schema_version": 2,
+  "route_kind": "telegram-topic",
+  "route_pattern": "telegram:<chat_id>:<thread_id>",
+  "forbidden": [ "origin", "local", "all", "bare-platform" ],
+  "delivery_owner": "native-hermes-cron-gateway",
+  "delivery_semantics": "best-effort-non-authoritative",
+  "successful_receipt_contract": false,
+  "ambiguous_delivery_replay": "explicit-operator-only-may-duplicate"
+}

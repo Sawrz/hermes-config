@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "jobs": {
+    "cv-repo-pull": {
+      "origin": "ssh://git@git.example.test/sandro/cv.git",
+      "repository": "sandro/cv",
+      "ref": "refs/heads/main",
+      "destination": "/var/lib/hermes-repositories/cv",
+      "transport": "ssh",
+      "mode": "immutable-reference-cache",
+      "ssh_host": "git.example.test",
+      "ssh_port": 22,
+      "known_hosts_file": "/run/hermes-repository-sync/known_hosts",
+      "identity_file": "/run/hermes-repository-sync/id_ed25519",
+      "timeout_seconds": 120,
+      "retries": 2,
+      "lock_timeout_seconds": 0
+    },
+    "nix-config-pull": {
+      "origin": "ssh://git@git.example.test/nixos/nix-config.git",
+      "repository": "nixos/nix-config",
+      "ref": "refs/heads/master",
+      "destination": "/var/lib/hermes-repositories/nix-config",
+      "transport": "ssh",
+      "mode": "immutable-reference-cache",
+      "ssh_host": "git.example.test",
+      "ssh_port": 22,
+      "known_hosts_file": "/run/hermes-repository-sync/known_hosts",
+      "identity_file": "/run/hermes-repository-sync/id_ed25519",
+      "timeout_seconds": 120,
+      "retries": 2,
+      "lock_timeout_seconds": 0
+    },
+    "obsidian-main-vault-pull": {
+      "origin": "ssh://git@git.example.test/sandro/obsidian-main-vault.git",
+      "repository": "sandro/obsidian-main-vault",
+      "ref": "refs/heads/main",
+      "destination": "/var/lib/hermes-repositories/obsidian-main-vault",
+      "transport": "ssh",
+      "mode": "immutable-reference-cache",
+      "ssh_host": "git.example.test",
+      "ssh_port": 22,
+      "known_hosts_file": "/run/hermes-repository-sync/known_hosts",
+      "identity_file": "/run/hermes-repository-sync/id_ed25519",
+      "timeout_seconds": 120,
+      "retries": 2,
+      "lock_timeout_seconds": 0
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "workflow": "daily-intake-closeout",
+  "timezone": "Europe/Berlin",
+  "start_date": "2099-01-01",
+  "recurrence": {
+    "kind": "daily",
+    "interval": 1,
+    "local_time": "20:00",
+    "weekdays": []
+  },
+  "dependency": {
+    "present": false,
+    "revision": "replace-at-runtime"
+  }
+}

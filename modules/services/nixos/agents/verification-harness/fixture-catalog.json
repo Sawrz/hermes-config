@@ -1,0 +1,82 @@
+{
+  "schema_version": "hermes.verification.fixture-catalog.v1",
+  "rules": {
+    "profile": "Use a disposable, dedicated Hermes profile/HERMES_HOME with no concurrent work. Never run synthetic failure fixtures against a production profile.",
+    "correlation": "Generate one UUID correlation_id per run and carry it in the job name, script fixture marker, evidence bundle, disposable provider log, and delivery-sink log. Use one dedicated fixture HERMES_HOME and one bounded before/after window.",
+    "window": "Capture supported Hermes CLI and external boundary evidence immediately before the run, execute exactly once, wait for terminal cron history plus provider/delivery settlement, then capture immediately after. Record UTC timestamps and settle_seconds.",
+    "cleanup": "Delete only the disposable fixture job/profile state after evidence is copied. Do not mutate production jobs, credentials, chats, Kanban, Forgejo, ntfy, Prometheus, or application state.",
+    "failure": "Failed, malformed, timed-out, killed, restarted, missing, ambiguous, or uncorrelated evidence is never green."
+  },
+  "sources": {
+    "scheduler_executions": {
+      "owner": "Hermes cron public CLI",
+      "correlation": "exact job_id plus execution id in one dedicated fixture HERMES_HOME",
+      "purpose": "one scheduler execution and terminal status",
+      "command": "hermes cron runs <job-id> --limit 500"
+    },
+    "agent_sessions_and_tokens": {
+      "owner": "Hermes sessions public CLI plus disposable provider boundary",
+      "correlation": "dedicated fixture HERMES_HOME plus exact provider job_id and correlation_id",
+      "purpose": "session creation and physical model usage without private Hermes database access",
+      "commands": [
+        "hermes sessions list --source cron --limit 10000",
+        "provider fixture append-only JSONL"
+      ],
+      "derivation": "agent_sessions is the before/after set difference of public cron-session IDs; input_tokens and output_tokens are summed from new provider events"
+    },
+    "model_attempts": {
+      "owner": "Disposable local OpenAI-compatible provider used only by the controlled fixture profile",
+      "path": "operator-selected append-only JSONL passed to collect.py --model-log",
+      "event_schema": "exactly event_id, correlation_id, job_id, received_at, completed_at, outcome, input_tokens, output_tokens; outcome is success, error, or interrupted",
+      "derivation": "model_attempts counts new events; model_successes counts success outcomes; token observations sum new event usage. Interrupted events have no completed_at and remain attempts.",
+      "correlation": "exact job_id and correlation_id recorded by the provider fixture",
+      "purpose": "observe physical API attempts, terminal provider outcomes, and response usage without private Hermes metrics tables"
+    },
+    "delivery": {
+      "owner": "Disposable local delivery sink for the controlled fixture profile",
+      "path": "operator-selected append-only JSONL passed to collect.py --delivery-log",
+      "event_schema": "exactly event_id, correlation_id, job_id, received_at; all non-empty strings",
+      "derivation": "deliveries is the count of new event_id values whose correlation_id and job_id exactly match the run",
+      "correlation": "exact job_id and correlation_id recorded by the sink",
+      "purpose": "observe real delivery requests without relying on gateway log verbosity or claiming human receipt"
+    },
+    "external_mutation": {
+      "owner": "read-only boundary probes",
+      "query": "fixture-specific canonical digest/count snapshots",
+      "correlation": "same before/after window and named probe",
+      "purpose": "prove no Kanban, Forgejo, ntfy, Prometheus, or other configured external mutation on healthy no-change"
+    }
+  },
+  "fixtures": [
+    {
+      "name": "healthy_no_change",
+      "input": "valid gate output {\"wakeAgent\":false}",
+      "expected": "one successful execution; zero changed events, sessions, model attempts/successes, tokens, deliveries, and external mutations"
+    },
+    {
+      "name": "real_change_positive_control",
+      "input": "valid gate output {\"wakeAgent\":true,\"context\":{...}} with a deterministic local fixture",
+      "expected": "one successful execution and at least one session, logical model attempt, successful call, non-zero token usage, and one correlated request at the disposable delivery sink"
+    },
+    {
+      "name": "gate_error_fail_safe",
+      "input": "valid wakeAgent=true error context produced by the gate's supported force-error knob",
+      "expected": "agent wakes and the error path is visible; never synthetic production breakage"
+    },
+    {
+      "name": "malformed_gate_fail_closed",
+      "input": "malformed/non-JSON gate output in the disposable profile",
+      "expected": "native fail-safe wake, one agent/model path, and a visible terminal execution; never silently classified as no change"
+    },
+    {
+      "name": "timeout_fail_closed",
+      "input": "bounded gate script exceeding its disposable script timeout",
+      "expected": "native script-error prompt wakes the agent and reports the timeout; never silently classified as no change"
+    },
+    {
+      "name": "kill_restart_fail_closed",
+      "input": "kill/restart only the disposable fixture gateway during a controlled run",
+      "expected": "failed/incomplete with visible error; never success"
+    }
+  ]
+}

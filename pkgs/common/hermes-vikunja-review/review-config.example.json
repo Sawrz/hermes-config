@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "api_version": "v2",
+  "timezone": "Europe/Berlin",
+  "inbox_project_id": 10,
+  "limits": {
+    "per_page": 50,
+    "max_pages": 10,
+    "max_tasks": 250,
+    "timeout_seconds": 20
+  },
+  "reviews": {
+    "daily": {
+      "sections": [
+        {"name": "Due", "role": "due", "saved_filter_id": 101},
+        {"name": "Starting", "role": "starting", "saved_filter_id": 102}
+      ]
+    },
+    "weekly": {
+      "sections": [
+        {"name": "Inbox", "role": "inbox", "saved_filter_id": 103},
+        {"name": "Waiting", "role": "waiting", "saved_filter_id": 104}
+      ]
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "name": "digest-edition",
+  "preference_version": 2,
+  "properties": {
+    "enabled": { "type": "boolean", "default": false },
+    "cadence_minutes": { "type": "integer", "minimum": 60, "maximum": 10080, "default": 1440 },
+    "edition": { "type": "string", "enum": [ "morning", "evening", "weekly" ], "default": "morning" },
+    "language": { "type": "string", "enum": [ "de", "en" ], "default": "en" },
+    "topics": { "type": "string-list", "max_items": 16, "max_length": 80, "default": [] },
+    "max_candidates": { "type": "integer", "minimum": 1, "maximum": 50, "default": 20 },
+    "max_prompt_chars": { "type": "integer", "minimum": 2000, "maximum": 100000, "default": 40000 },
+    "transcripts": { "type": "string", "enum": [ "never", "selective" ], "default": "selective" },
+    "category_ids": { "type": "string-list", "max_items": 16, "max_length": 10, "default": [] },
+    "media_types": { "type": "string-list", "max_items": 3, "max_length": 20, "default": [ "article", "podcast", "video" ] },
+    "excluded_source_ids": { "type": "string-list", "max_items": 16, "max_length": 10, "default": [] },
+    "timezone": { "type": "string", "enum": [ "UTC", "Europe/Berlin" ], "default": "Europe/Berlin" },
+    "quiet_hours_start": { "type": "string", "enum": [ "00:00", "06:00", "22:00" ], "default": "22:00" },
+    "quiet_hours_end": { "type": "string", "enum": [ "00:00", "06:00", "22:00" ], "default": "06:00" },
+    "consolidation": { "type": "string", "enum": [ "none", "source", "topic" ], "default": "topic" },
+    "style": { "type": "string", "enum": [ "concise", "balanced", "detailed" ], "default": "concise" },
+    "max_extracted_chars": { "type": "integer", "minimum": 1000, "maximum": 50000, "default": 12000 },
+    "max_transcript_chars": { "type": "integer", "minimum": 1000, "maximum": 50000, "default": 18000 }
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "artifact": {
+    "gate_script_identity": "/nix/store/example-gate/bin/gate",
+    "gate_script_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "git_revision": "47eab9e75c650389fa8945de8d4f174371c1a99d",
+    "hermes_source_revision": "3c27eb6234bf91b8ceee9e9071591b31e9b148cb",
+    "hermes_version": "0.20.0",
+    "job_id": "fixture-no-change-11111111",
+    "nix_generation": "/nix/store/example-system-generation",
+    "package_store_path": "/nix/store/8xmjgdj5wdbi1l5d1fbaqcrxlkv5yy30-hermes-agent-0.20.0",
+    "profile": "system-admin",
+    "profile_config_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "correlation_id": "11111111-1111-4111-8111-111111111111",
+  "error": null,
+  "evidence": {
+    "after": {
+      "artifact": {
+        "gate_script_identity": "/nix/store/example-gate/bin/gate",
+        "gate_script_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "git_revision": "47eab9e75c650389fa8945de8d4f174371c1a99d",
+        "hermes_source_revision": "3c27eb6234bf91b8ceee9e9071591b31e9b148cb",
+        "hermes_version": "0.20.0",
+        "job_id": "fixture-no-change-11111111",
+        "nix_generation": "/nix/store/example-system-generation",
+        "package_store_path": "/nix/store/8xmjgdj5wdbi1l5d1fbaqcrxlkv5yy30-hermes-agent-0.20.0",
+        "profile": "system-admin",
+        "profile_config_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "captured_at": "2026-08-28T10:00:55Z",
+      "correlation_id": "11111111-1111-4111-8111-111111111111",
+      "delivery_events": [],
+      "gate_execution": {
+        "correlation_id": "11111111-1111-4111-8111-111111111111",
+        "execution_id": "execution-healthy-1",
+        "parser_result": {
+          "changed_events": 0,
+          "wakeAgent": false
+        },
+        "raw_output": "{\"changed_events\":0,\"wakeAgent\":false}\n",
+        "raw_output_sha256": "6251bce2ca53beb99e73bf1cea313f5cd4629c876df9379c616163f96805f6be",
+        "scheduler_consumed_decision": {
+          "changed_events": 0,
+          "wakeAgent": false
+        },
+        "script_identity": "/nix/store/example-gate/bin/gate",
+        "script_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "model_events": [],
+      "mutation_probes": {
+        "forgejo": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "kanban": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "ntfy": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "prometheus": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      "profile_isolation": {
+        "unrelated-profile": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+      },
+      "scheduler": [
+        {
+          "claimed_at": "2026-08-28T10:00:01Z",
+          "error": null,
+          "finished_at": "2026-08-28T10:00:55Z",
+          "id": "execution-healthy-1",
+          "job_id": "fixture-no-change-11111111",
+          "source": "manual",
+          "started_at": "2026-08-28T10:00:01Z",
+          "status": "completed"
+        }
+      ],
+      "schema_version": "hermes.verification.supported-snapshot.v2",
+      "sessions": []
+    },
+    "before": {
+      "artifact": {
+        "gate_script_identity": "/nix/store/example-gate/bin/gate",
+        "gate_script_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "git_revision": "47eab9e75c650389fa8945de8d4f174371c1a99d",
+        "hermes_source_revision": "3c27eb6234bf91b8ceee9e9071591b31e9b148cb",
+        "hermes_version": "0.20.0",
+        "job_id": "fixture-no-change-11111111",
+        "nix_generation": "/nix/store/example-system-generation",
+        "package_store_path": "/nix/store/8xmjgdj5wdbi1l5d1fbaqcrxlkv5yy30-hermes-agent-0.20.0",
+        "profile": "system-admin",
+        "profile_config_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "captured_at": "2026-08-28T10:00:01Z",
+      "correlation_id": "11111111-1111-4111-8111-111111111111",
+      "delivery_events": [],
+      "gate_execution": null,
+      "model_events": [],
+      "mutation_probes": {
+        "forgejo": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "kanban": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "ntfy": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "prometheus": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      "profile_isolation": {
+        "unrelated-profile": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+      },
+      "scheduler": [],
+      "schema_version": "hermes.verification.supported-snapshot.v2",
+      "sessions": []
+    }
+  },
+  "execution_status": "success",
+  "fixture": "healthy_no_change",
+  "observations": {
+    "agent_sessions": 0,
+    "changed_events": 0,
+    "deliveries": 0,
+    "input_tokens": 0,
+    "model_attempts": 0,
+    "model_successes": 0,
+    "output_tokens": 0,
+    "scheduler_executions": 1
+  },
+  "schema_version": "hermes.verification.observation.v1",
+  "wake_agent": false,
+  "window": {
+    "end": "2026-08-28T10:01:00Z",
+    "settle_seconds": 5,
+    "start": "2026-08-28T10:00:00Z"
+  }
+}

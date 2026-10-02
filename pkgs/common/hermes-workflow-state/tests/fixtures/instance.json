@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "fixture-nix-config",
+  "repository": "nixos/nix-config",
+  "default_branch": "master",
+  "namespace": "nix-config",
+  "board": "homelab-devops",
+  "roles": {
+    "implementer": "system-admin",
+    "reviewer": "code-reviewer"
+  },
+  "tenant": "homelab-devops",
+  "automation_authors": [
+    "system-admin-agent",
+    "code-reviewer",
+    "code-reviewer-agent"
+  ],
+  "forgejo_origin": "https://git.example.test",
+  "projection": {
+    "origin": "https://tasks.example.test",
+    "project": 110,
+    "owner": "sandro",
+    "title": "PRs"
+  },
+  "repository_job": "nix-config-pull",
+  "legacy_container_marker": "system-admin-container-image-monthly-update",
+  "legacy_generations": {},
+  "workflow_key_prefix": "forgejo",
+  "review_executor": "hermes"
+}

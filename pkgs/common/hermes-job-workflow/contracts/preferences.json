@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "name": "job-discovery",
+  "preference_version": 2,
+  "properties": {
+    "enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "active_research_enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "active_cadence_minutes": {
+      "type": "integer",
+      "minimum": 60,
+      "maximum": 10080,
+      "default": 1440
+    },
+    "max_active_candidates": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 25,
+      "default": 8
+    },
+    "revalidate_after_minutes": {
+      "type": "integer",
+      "minimum": 60,
+      "maximum": 10080,
+      "default": 1440
+    },
+    "closed_retention_days": {
+      "type": "integer",
+      "minimum": 30,
+      "maximum": 730,
+      "default": 180
+    },
+    "projection": {
+      "type": "string",
+      "enum": [
+        "off",
+        "manual",
+        "suggest",
+        "auto"
+      ],
+      "default": "manual"
+    }
+  }
+}

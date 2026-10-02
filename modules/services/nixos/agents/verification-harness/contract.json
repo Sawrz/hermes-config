@@ -1,0 +1,110 @@
+{
+  "artifact_fields": [
+    "git_revision",
+    "hermes_version",
+    "hermes_source_revision",
+    "package_store_path",
+    "nix_generation",
+    "profile_config_sha256",
+    "job_id",
+    "gate_script_identity",
+    "gate_script_sha256",
+    "profile"
+  ],
+  "fixtures": {
+    "gate_error_fail_safe": {
+      "exact": {
+        "scheduler_executions": 1
+      },
+      "execution_status": "success",
+      "minimum": {
+        "agent_sessions": 1,
+        "model_attempts": 1,
+        "model_successes": 1
+      },
+      "require_profile_isolation": true,
+      "wake_agent": true
+    },
+    "healthy_no_change": {
+      "exact": {
+        "agent_sessions": 0,
+        "changed_events": 0,
+        "deliveries": 0,
+        "input_tokens": 0,
+        "model_attempts": 0,
+        "model_successes": 0,
+        "output_tokens": 0,
+        "scheduler_executions": 1
+      },
+      "execution_status": "success",
+      "require_profile_isolation": true,
+      "require_unchanged_mutation_probes": true,
+      "wake_agent": false
+    },
+    "kill_restart_fail_closed": {
+      "exact": {
+        "deliveries": 0,
+        "model_successes": 0,
+        "scheduler_executions": 1
+      },
+      "execution_status": "failed",
+      "require_error": true,
+      "require_profile_isolation": true,
+      "wake_agent": null
+    },
+    "malformed_gate_fail_closed": {
+      "exact": {
+        "scheduler_executions": 1
+      },
+      "execution_status": "success",
+      "minimum": {
+        "agent_sessions": 1,
+        "model_attempts": 1,
+        "model_successes": 1
+      },
+      "require_profile_isolation": true,
+      "wake_agent": true
+    },
+    "real_change_positive_control": {
+      "exact": {
+        "changed_events": 1,
+        "scheduler_executions": 1
+      },
+      "execution_status": "success",
+      "minimum": {
+        "agent_sessions": 1,
+        "deliveries": 1,
+        "input_tokens": 1,
+        "model_attempts": 1,
+        "model_successes": 1,
+        "output_tokens": 1
+      },
+      "require_profile_isolation": true,
+      "wake_agent": true
+    },
+    "timeout_fail_closed": {
+      "exact": {
+        "scheduler_executions": 1
+      },
+      "execution_status": "success",
+      "minimum": {
+        "agent_sessions": 1,
+        "model_attempts": 1,
+        "model_successes": 1
+      },
+      "require_profile_isolation": true,
+      "wake_agent": true
+    }
+  },
+  "observation_fields": [
+    "scheduler_executions",
+    "changed_events",
+    "agent_sessions",
+    "model_attempts",
+    "model_successes",
+    "input_tokens",
+    "output_tokens",
+    "deliveries"
+  ],
+  "schema_version": "hermes.verification.contract.v1"
+}

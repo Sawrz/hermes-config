@@ -1,0 +1,28 @@
+{
+  "schema_version": "hermes.verification.artifact-inventory.v1",
+  "observed_on": "2026-08-28",
+  "host": "alakazam",
+  "host_address": "192.168.20.200",
+  "hermes_version": "0.20.0",
+  "hermes_source_revision": "3c27eb6234bf91b8ceee9e9071591b31e9b148cb",
+  "wrapper_store_path": "/nix/store/8xmjgdj5wdbi1l5d1fbaqcrxlkv5yy30-hermes-agent-0.20.0",
+  "python_environment_store_path": "/nix/store/vawy2mk2yfyxwsr0a2shmdq1jqsvr8i8-hermes-agent-env",
+  "runtime_interfaces": {
+    "gateway_log": "systemd journal for the profile gateway unit",
+    "cron_history_cli": "hermes cron runs <job-id> --limit 500",
+    "cron_sessions_cli": "hermes sessions list --source cron --limit 10000"
+  },
+  "source_contracts": {
+    "scheduler": "public cron-history CLI: one exact job execution and terminal status",
+    "model_attempt": "disposable local OpenAI-compatible provider logs each request before responding",
+    "delivery": "disposable local sink append-only JSONL with exact correlation_id and job_id",
+    "model_success_and_tokens": "the same provider event records terminal outcome and controlled response usage; positive control also requires completed cron history and delivery",
+    "session": "public sessions CLI in a disposable dedicated HERMES_HOME"
+  },
+  "limitations": [
+    "The pinned CLI outputs human-readable rows rather than JSON; the collector parses only the exact pinned 0.20.0 grammar and fails closed on other shapes.",
+    "Correlation requires a disposable exclusive profile, one fixture execution, exact job/correlation IDs, and bounded before/after snapshots.",
+    "Provider-reported usage is acceptable only for the controlled disposable OpenAI-compatible fixture; it is not an accounting source for production providers.",
+    "Hermes 0.20.0 does not persist a successful Telegram receipt/message identity; the harness proves correlated delivery attempts or their absence, not human receipt."
+  ]
+}

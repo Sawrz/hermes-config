@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "vikunja-task-reviews",
+  "preference_version": 1,
+  "properties": {
+    "enabled": {"type": "boolean", "default": false},
+    "daily_hour": {"type": "integer", "minimum": 5, "maximum": 10, "default": 6},
+    "weekly_hour": {"type": "integer", "minimum": 5, "maximum": 10, "default": 6},
+    "weekly_weekday": {"type": "string", "enum": ["saturday", "sunday"], "default": "sunday"},
+    "render_style": {"type": "string", "enum": ["compact", "detailed"], "default": "compact"},
+    "daily_sections": {"type": "string-list", "max_items": 12, "max_length": 80, "default": ["Due", "Starting"]},
+    "weekly_sections": {"type": "string-list", "max_items": 12, "max_length": 80, "default": ["Inbox", "Waiting"]}
+  }
+}

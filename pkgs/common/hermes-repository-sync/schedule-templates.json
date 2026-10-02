@@ -1,0 +1,68 @@
+{
+  "jobs": {
+    "cv-repo-pull": {
+      "cadence_owner": "profile:personal-assistant-sandro",
+      "deliver": "local",
+      "enabled_toolsets": [],
+      "no_agent": true,
+      "schedule_required_at_materialization": true,
+      "script": "hermes-repository-sync --registry @REGISTRY@ --job cv-repo-pull --state-dir @STATE_DIR@",
+      "skills": []
+    },
+    "nix-config-pull": {
+      "cadence_owner": "profile:system-admin",
+      "deliver": "local",
+      "enabled_toolsets": [],
+      "no_agent": true,
+      "schedule_required_at_materialization": true,
+      "script": "hermes-repository-sync --registry @REGISTRY@ --job nix-config-pull --state-dir @STATE_DIR@",
+      "skills": []
+    },
+    "obsidian-main-vault-pull": {
+      "cadence_owner": "profile:personal-assistant-sandro",
+      "deliver": "local",
+      "enabled_toolsets": [],
+      "no_agent": true,
+      "schedule_required_at_materialization": true,
+      "script": "hermes-repository-sync --registry @REGISTRY@ --job obsidian-main-vault-pull --state-dir @STATE_DIR@",
+      "skills": []
+    },
+    "omanix-pull": {
+      "cadence_owner": "profile:system-admin",
+      "deliver": "local",
+      "enabled_toolsets": [],
+      "no_agent": true,
+      "schedule_required_at_materialization": true,
+      "script": "hermes-repository-sync --registry @REGISTRY@ --job omanix-pull --state-dir @STATE_DIR@",
+      "skills": []
+    },
+    "nix-containers-pull": {
+      "cadence_owner": "profile:system-admin",
+      "deliver": "local",
+      "enabled_toolsets": [],
+      "no_agent": true,
+      "schedule_required_at_materialization": true,
+      "script": "hermes-repository-sync --registry @REGISTRY@ --job nix-containers-pull --state-dir @STATE_DIR@",
+      "skills": []
+    },
+    "family-controls-pull": {
+      "cadence_owner": "profile:system-admin",
+      "deliver": "local",
+      "enabled_toolsets": [],
+      "no_agent": true,
+      "schedule_required_at_materialization": true,
+      "script": "hermes-repository-sync --registry @REGISTRY@ --job family-controls-pull --state-dir @STATE_DIR@",
+      "skills": []
+    },
+    "hermes-config-pull": {
+      "cadence_owner": "profile:system-admin",
+      "deliver": "local",
+      "enabled_toolsets": [],
+      "no_agent": true,
+      "schedule_required_at_materialization": true,
+      "script": "hermes-repository-sync --registry @REGISTRY@ --job hermes-config-pull --state-dir @STATE_DIR@",
+      "skills": []
+    }
+  },
+  "schema_version": 1
+}

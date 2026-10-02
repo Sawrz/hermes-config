@@ -1,0 +1,27 @@
+{
+  "source": "Live read-only Vikunja API-v2, Markdown format; no task was changed",
+  "task": {
+    "id": 1587,
+    "title": "Review, merge, rebuild, and verify nix-config PR #172",
+    "description": "# Review, merge, rebuild, and verify nix-config PR #172\n\n## Current action\n\n**Owner:** `sandro`  \n**State:** PR #172 merged; rebuild and post-rebuild verification remain  \n**Sandro action:** Rebuild Alakazam, then let Linus verify the deployed code-reviewer skill.\n\n## Why this change\n\nForgejo can accept a review-create request but leave the review in `PENDING`. The declarative reviewer skill explicitly submits pending reviews and verifies the resulting formal state before reporting completion.\n\n## What changes\n\n- Documents pending-review submission and the observed `APPROVED` submit value.\n- Requires exact-head, staleness, official-state, and inline-comment read-back.\n- Adds a focused Nix assertion check for the repo-managed skill.\n- Does not change profile-side copies or mutate live reviews.\n\n## Review and readiness\n\n- **Exact head:** `1dda19bd1b681e48e216e650cd894886f4e84127`\n- **CI:** green, 11/11 exact-head contexts successful\n- **Code review:** review #170 is `APPROVED`, non-stale, with zero inline comments; it completed after the merge and is retrospective evidence\n- **Merged:** by `sandro` as `707d90fabf4a492b6762458cdffb86c5426ef5ea`\n\n## Merge checklist\n\n- [x] Review exact current head\n- [x] Merge or record why not\n- [ ] Rebuild Alakazam\n- [ ] Linus verification complete\n- [ ] Sandro manual verification complete, when required\n- [ ] Rollback/continue decision, only on failure\n\n## Risk and rollback\n\nDocumentation plus evaluation assertions for the Alakazam code-reviewer profile. Rollback is the PR revert; no runtime change occurs before merge and rebuild.\n\n## Completion condition\n\nPR outcome, required Alakazam rebuild, and fresh code-reviewer skill/read-back verification are durably recorded.\n\n## Source\n\n- [Forgejo issue #171](https://git.wrzalek.com/nixos/nix-config/issues/171)\n- [Forgejo PR #172](https://git.wrzalek.com/nixos/nix-config/pulls/172)\n- Kanban lineage root: `t_05367b21`\n- Active Kanban card: `t_92a1e906`\n- Related Questions task: `none`\n- Last updated by: `system-admin`\n\n* * *\n\n**Automation reference:** `nix-config-pr-172-merge`",
+    "project_id": 110,
+    "done": true,
+    "done_at": "2026-08-15T07:03:19Z",
+    "identifier": "#2",
+    "created": "2026-08-14T15:20:12Z",
+    "updated": "2026-08-15T07:03:19Z",
+    "hex_color": "",
+    "priority": 0,
+    "assignees": [
+      {
+        "id": 1,
+        "username": "sandro"
+      }
+    ],
+    "created_by": {
+      "id": 4,
+      "username": "bot-system-admin"
+    },
+    "related_tasks": {}
+  }
+}

@@ -1,0 +1,26 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: nix-heavy
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: https://github.com/cachix/install-nix-action@08dcb3a5e62fa31e2da3d490afc4176ef55ecd72
+        with:
+          install_url: https://releases.nixos.org/nix/nix-2.34.7/install
+          extra_nix_config: experimental-features = nix-command flakes
+      - name: Evaluate standalone outputs
+        run: nix flake check --no-build --no-write-lock-file --no-update-lock-file
+      - name: Build checks in separate evaluators
+        run: |
+          set -euo pipefail
+          nix eval --json .#checks.x86_64-linux --apply builtins.attrNames > checks.json
+          python3 -c 'import json; print("\n".join(json.load(open("checks.json"))))' > checks.txt
+          while IFS= read -r check; do
+            nix build ".#checks.x86_64-linux.$check" --no-link --no-write-lock-file --no-update-lock-file
+          done < checks.txt
