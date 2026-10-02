@@ -1,15 +1,28 @@
 {
   description = "Managed Hermes capabilities, native workflow adapters and runtime integration";
-  inputs.nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+  inputs.nixpkgs-unstable.url = "git+ssh://git@ssh.git.wrzalek.com/nixos/upstream-nixpkgs.git?shallow=1&ref=nixos-unstable";
+  inputs.nixpkgs.url = "git+ssh://git@ssh.git.wrzalek.com/nixos/upstream-nixpkgs.git?shallow=1&ref=nixos-26.05";
   inputs.sops-nix = {
-    url = "github:Mic92/sops-nix";
+    url = "git+ssh://git@ssh.git.wrzalek.com/nixos/upstream-sops-nix.git?shallow=1";
     inputs.nixpkgs.follows = "nixpkgs";
   };
   inputs.hermes-agent = {
-    url = "github:NousResearch/hermes-agent/v2026.9.14";
+    url = "git+ssh://git@ssh.git.wrzalek.com/nixos/upstream-hermes-agent.git?shallow=1&ref=refs/tags/v2026.9.14";
     inputs.nixpkgs.follows = "nixpkgs";
   };
+  # Keep transitive source reads on the verified Forgejo mirrors.
+  inputs.hermes-agent.inputs.flake-parts.url =
+    "git+ssh://git@ssh.git.wrzalek.com/nixos/upstream-flake-parts.git?shallow=1";
+  inputs.hermes-agent.inputs.home-manager.url =
+    "git+ssh://git@ssh.git.wrzalek.com/nixos/upstream-home-manager.git?shallow=1";
+  inputs.hermes-agent.inputs.npm-lockfile-fix.url =
+    "git+ssh://git@ssh.git.wrzalek.com/nixos/upstream-npm-lockfile-fix.git?shallow=1";
+  inputs.hermes-agent.inputs.pyproject-build-systems.url =
+    "git+ssh://git@ssh.git.wrzalek.com/nixos/upstream-build-system-pkgs.git?shallow=1";
+  inputs.hermes-agent.inputs.pyproject-nix.url =
+    "git+ssh://git@ssh.git.wrzalek.com/nixos/upstream-pyproject.nix.git?shallow=1";
+  inputs.hermes-agent.inputs.uv2nix.url =
+    "git+ssh://git@ssh.git.wrzalek.com/nixos/upstream-uv2nix.git?shallow=1";
   outputs =
     inputs@{ self, nixpkgs, ... }:
     let

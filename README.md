@@ -43,3 +43,23 @@ the task; the helper performs no network writes and never claims dispatch. Paper
 owns task-agent provisioning and their credentials, while Hermes owns persistent
 profiles with memory. Paperclip routing cannot open existing Hermes adapter stores.
 Existing receipts retain their binding and are not replayed or migrated by this change.
+
+## Source access and recovery
+
+Standalone inputs use the private Forgejo upstream mirrors. CI requires the
+`NIX_FORGEJO_SSH_KEY` Actions secret with read-only access through `nix-builders`.
+Public upstream recovery uses HTTPS GitHub Git, without an API token. CI runs
+checks through `recovery/sources.py`; raw Nix commands do not invoke fallback.
+
+For local checks, use your normal Forgejo Git identity:
+
+```sh
+python3 recovery/sources.py run --source . --target checks -- \
+  nix flake check '{flake}' --no-write-lock-file --no-update-lock-file
+```
+
+Recovery retains the locked commit and content hash, and only handles transport
+outages. Authentication and integrity errors stop the operation. Run
+`python3 recovery/sources.py update-check --source .` before `nix flake update`;
+updates require Forgejo. The recovery and runner-access helpers are shared
+copies of the tested `nix-config` implementation and should be updated together.

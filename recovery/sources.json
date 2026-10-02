@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "sources": {
+    "ssh://git@ssh.git.wrzalek.com/nixos/hermes-config.git": {
+      "primary": "ssh://git@ssh.git.wrzalek.com/nixos/hermes-config.git",
+      "recovery": "ssh://git@github.com/Sawrz/hermes-config.git"
+    },
+    "ssh://git@ssh.git.wrzalek.com/nixos/upstream-build-system-pkgs.git": {
+      "primary": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-build-system-pkgs.git",
+      "recovery": "https://github.com/pyproject-nix/build-system-pkgs.git"
+    },
+    "ssh://git@ssh.git.wrzalek.com/nixos/upstream-flake-parts.git": {
+      "primary": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-flake-parts.git",
+      "recovery": "https://github.com/hercules-ci/flake-parts.git"
+    },
+    "ssh://git@ssh.git.wrzalek.com/nixos/upstream-hermes-agent.git": {
+      "primary": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-hermes-agent.git",
+      "recovery": "https://github.com/NousResearch/hermes-agent.git"
+    },
+    "ssh://git@ssh.git.wrzalek.com/nixos/upstream-home-manager.git": {
+      "primary": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-home-manager.git",
+      "recovery": "https://github.com/nix-community/home-manager.git"
+    },
+    "ssh://git@ssh.git.wrzalek.com/nixos/upstream-nixpkgs.git": {
+      "primary": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-nixpkgs.git",
+      "recovery": "https://github.com/nixos/nixpkgs.git"
+    },
+    "ssh://git@ssh.git.wrzalek.com/nixos/upstream-npm-lockfile-fix.git": {
+      "primary": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-npm-lockfile-fix.git",
+      "recovery": "https://github.com/jeslie0/npm-lockfile-fix.git"
+    },
+    "ssh://git@ssh.git.wrzalek.com/nixos/upstream-pyproject.nix.git": {
+      "primary": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-pyproject.nix.git",
+      "recovery": "https://github.com/pyproject-nix/pyproject.nix.git"
+    },
+    "ssh://git@ssh.git.wrzalek.com/nixos/upstream-sops-nix.git": {
+      "primary": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-sops-nix.git",
+      "recovery": "https://github.com/Mic92/sops-nix.git"
+    },
+    "ssh://git@ssh.git.wrzalek.com/nixos/upstream-uv2nix.git": {
+      "primary": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-uv2nix.git",
+      "recovery": "https://github.com/pyproject-nix/uv2nix.git"
+    }
+  },
+  "required_repositories": {
+    "deployment": "ssh://git@ssh.git.wrzalek.com/nixos/hermes-config.git"
+  },
+  "operation_inputs": {
+    "checks": [],
+    "packages": [],
+    "devShells": []
+  }
+}

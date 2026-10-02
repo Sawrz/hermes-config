@@ -14,13 +14,19 @@ jobs:
         with:
           install_url: https://releases.nixos.org/nix/nix-2.34.7/install
           extra_nix_config: experimental-features = nix-command flakes
+      - name: Configure private source access
+        env:
+          NIX_FORGEJO_SSH_KEY: ${{ secrets.NIX_FORGEJO_SSH_KEY }}
+        run: python3 scripts/ci_source_access.py
       - name: Evaluate standalone outputs
-        run: nix flake check --no-build --no-write-lock-file --no-update-lock-file
+        run: python3 recovery/sources.py run --source . --target checks -- nix flake check "{flake}" --no-build --no-write-lock-file --no-update-lock-file
       - name: Build checks in separate evaluators
         run: |
-          set -euo pipefail
-          nix eval --json .#checks.x86_64-linux --apply builtins.attrNames > checks.json
-          python3 -c 'import json; print("\n".join(json.load(open("checks.json"))))' > checks.txt
-          while IFS= read -r check; do
-            nix build ".#checks.x86_64-linux.$check" --no-link --no-write-lock-file --no-update-lock-file
-          done < checks.txt
+          python3 recovery/sources.py run --source . --target checks -- bash -euo pipefail -c '
+            flake="$1"
+            nix eval --json "$flake#checks.x86_64-linux" --apply builtins.attrNames --no-update-lock-file > checks.json
+            python3 -c "import json; print(chr(10).join(json.load(open(\"checks.json\"))))" > checks.txt
+            while IFS= read -r check; do
+              nix build "$flake#checks.x86_64-linux.$check" --no-link --no-write-lock-file --no-update-lock-file
+            done < checks.txt
+          ' bash "{flake}"
