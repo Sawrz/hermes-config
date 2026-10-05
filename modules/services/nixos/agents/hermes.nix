@@ -236,6 +236,10 @@ let
   profileDockerHomeDir = name: "${profileDir name}/sandboxes/docker/default/home";
   defaultProfilesMaskDir = "${hermesHomeDir}/sandboxes/docker/default/empty-profiles";
   cacheSubdirs = [
+    # Own the parent explicitly: install -d otherwise creates it as root,
+    # preventing native tools from creating new cache subdirectories.
+    "cache"
+    "cache/vision"
     "cache/documents"
     "cache/images"
     "cache/audio"

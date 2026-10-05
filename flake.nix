@@ -58,6 +58,7 @@
         // (import ./checks/components.nix { inherit self pkgs; })
         // (import ./checks/adapters.nix { inherit self pkgs; })
         // (import ./checks/native-cron.nix { inherit self pkgs; })
+        // (import ./checks/cache.nix { inherit self pkgs; })
         // {
           repositories = import ./checks/repositories.nix {
             inherit

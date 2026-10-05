@@ -11,6 +11,14 @@ expose project helpers and the pinned Hermes Python/SQLite runtime selection.
 Hosts, profile selection, personal identity, endpoints, secrets and policies
 remain in the consuming deployment.
 
+The module owns each enabled profile's `cache` parent and `cache/vision`
+directory, including the default profile. Activation and tmpfiles repair their
+ownership and mode using the configured Hermes service user/group, without
+recursively changing existing files or agent memory. Rebuild and activate the
+consuming host after updating the input; a successful build alone does not repair
+an existing runtime. Check this contract with
+`nix build --no-link .#checks.x86_64-linux.hermes-cache`.
+
 `custom.services.hermes.repositoryAuthority` declares the owning persistent profile,
 review executor, board context and `repositories`, keyed by instance name. This
 registry is independent of Kanban selection. `reviewExecutor = "paperclip"` delegates
