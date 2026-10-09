@@ -898,6 +898,9 @@ let
         ExecStartPre = [ (profileNativeCronReconcile name profile) ];
         Restart = config.services.hermes-agent.restart;
         RestartSec = config.services.hermes-agent.restartSec;
+        # The readiness probe may pull a missing sandbox image. Allow a bounded
+        # cold start instead of inheriting systemd's 90-second timeout.
+        TimeoutStartSec = lib.mkDefault "10min";
         UMask = "0007";
         NoNewPrivileges = true;
         ProtectSystem = "strict";
@@ -2893,6 +2896,8 @@ in
           ++ profileRestartTriggers "default" effectiveDefaultProfile;
           serviceConfig = {
             ExecStart = mkForce defaultGatewayStartScript;
+            # The default gateway runs the same image-dependent readiness probe.
+            TimeoutStartSec = lib.mkDefault "10min";
             BindPaths = [
               "${defaultWorkspaceDir}:/workspace"
               "${defaultOutputDir}:${cfg.outputContainerPath}"
