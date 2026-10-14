@@ -7,7 +7,7 @@ This F11 package consumes the F10 immutable Forgejo journal and projects support
 Three identities remain separate:
 
 - source event: the F10 `fj-<sha256>` event ID and source key;
-- logical workflow: `forgejo:nixos/nix-config:<issue|pull_request>:<number>`;
+- logical workflow: `forgejo:homelab/nix-config:<issue|pull_request>:<number>`;
 - execution epoch: the source event that creates a continuation after a completed workflow.
 
 The first task uses the logical identity as native `--idempotency-key`. A reopening after completion uses `<logical>:epoch:<event-id>`. The crash-safe mapping is a validated cache of the native task IDs; `hermes kanban --board ... show ... --json` is read back before every update.

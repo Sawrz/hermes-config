@@ -20,7 +20,7 @@ class IssueIntakeTests(unittest.TestCase):
     def test_authenticated_handled_receipt_is_evidence_not_new_work(self):
         receipt = (
             "Existing work retained.\n\n"
-            "<!-- hermes:handled-comment repo=nixos/nix-config "
+            "<!-- hermes:handled-comment repo=homelab/nix-config "
             "source=comment:3307 card=t_3e3def5c -->"
         )
         self.assertEqual(journal.comment_disposition(receipt, "system-admin-agent"), "evidence")
@@ -30,7 +30,7 @@ class IssueIntakeTests(unittest.TestCase):
             "actionable",
         )
         for malformed in (
-            receipt.replace("nixos/nix-config", "other/repo"),
+            receipt.replace("homelab/nix-config", "other/repo"),
             receipt.replace("comment:3307", "comment:wrong"),
             receipt.replace("t_3e3def5c", "bad-card"),
         ):

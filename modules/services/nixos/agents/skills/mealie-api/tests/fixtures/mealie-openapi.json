@@ -1,0 +1,2419 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Mealie",
+    "version": "nightly"
+  },
+  "paths": {
+    "/api/recipes": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRecipe"
+              }
+            }
+          }
+        }
+      },
+      "get": {}
+    },
+    "/api/recipes/{slug}": {
+      "put": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeIn"
+              }
+            }
+          }
+        }
+      },
+      "get": {}
+    },
+    "/api/households/mealplans": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlanEntry"
+              }
+            }
+          }
+        }
+      },
+      "get": {}
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateRecipe": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "CreateRecipe"
+      },
+      "RecipeIn": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Userid"
+          },
+          "householdId": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Householdid"
+          },
+          "groupId": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Groupid"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug",
+            "default": ""
+          },
+          "image": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image"
+          },
+          "recipeServings": {
+            "type": "number",
+            "title": "Recipeservings",
+            "default": 0
+          },
+          "recipeYieldQuantity": {
+            "type": "number",
+            "title": "Recipeyieldquantity",
+            "default": 0
+          },
+          "recipeYield": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipeyield"
+          },
+          "totalTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totaltime"
+          },
+          "prepTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preptime"
+          },
+          "cookTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cooktime"
+          },
+          "performTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performtime"
+          },
+          "totalTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totaltimeseconds"
+          },
+          "prepTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preptimeseconds"
+          },
+          "performTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performtimeseconds"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "default": ""
+          },
+          "recipeCategory": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeCategoryIn"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipecategory",
+            "default": []
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeTagIn"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags",
+            "default": []
+          },
+          "tools": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeToolIn"
+            },
+            "type": "array",
+            "title": "Tools",
+            "default": []
+          },
+          "rating": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rating"
+          },
+          "orgURL": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orgurl"
+          },
+          "dateAdded": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dateadded"
+          },
+          "dateUpdated": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dateupdated"
+          },
+          "createdAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Createdat"
+          },
+          "update_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Update At"
+          },
+          "lastMade": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastmade"
+          },
+          "recipeIngredient": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeIngredient-Input"
+            },
+            "type": "array",
+            "title": "Recipeingredient",
+            "default": []
+          },
+          "recipeInstructions": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeStep"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipeinstructions",
+            "default": []
+          },
+          "nutrition": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Nutrition"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "settings": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecipeSettings"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "assets": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeAsset"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assets",
+            "default": []
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeNote"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes",
+            "default": []
+          },
+          "extras": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extras",
+            "default": {}
+          },
+          "comments": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeCommentOut-Input"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comments",
+            "default": []
+          }
+        },
+        "type": "object",
+        "title": "RecipeIn",
+        "description": "Recipe as accepted on the write path only (create/update/patch request bodies).\n\nUnlike Recipe -- which is also used for responses and must guarantee real ids/slugs on\nits organizers -- this allows a client (e.g. hand-edited or re-imported JSON) to submit\ntags/categories/tools that omit id/slug, to be resolved or generated server-side."
+      },
+      "RecipeCategoryIn": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "groupId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Groupid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "RecipeCategoryIn"
+      },
+      "RecipeTagIn": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "groupId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Groupid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "RecipeTagIn",
+        "description": "Lenient variant of RecipeTag accepted only on the recipe write path (JSON import/edit),\nwhere a client may omit id/slug and expect them to be resolved or generated server-side.\nNever used for responses -- RecipeTag itself stays strictly required there.\n\nDeliberately does not subclass RecipeTag: narrowing id/slug from required to optional in a\nsubclass would be an unsound field override (mypy correctly rejects it), so this is built as\nan independent sibling with the same fields instead, matching how RecipeToolCreate/Save/Out\nare already kept as separate classes elsewhere in this module rather than narrowing each other."
+      },
+      "RecipeToolIn": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "groupId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Groupid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
+          },
+          "householdsWithTool": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Householdswithtool",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "RecipeToolIn",
+        "description": "Lenient variant of RecipeTool accepted only on the recipe write path. See RecipeTagIn."
+      },
+      "RecipeIngredient-Input": {
+        "properties": {
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity",
+            "default": 0
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IngredientUnit-Input"
+              },
+              {
+                "$ref": "#/components/schemas/CreateIngredientUnit"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "food": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IngredientFood-Input"
+              },
+              {
+                "$ref": "#/components/schemas/CreateIngredientFood"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Food"
+          },
+          "referencedRecipe": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Recipe-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note",
+            "default": ""
+          },
+          "display": {
+            "type": "string",
+            "title": "Display",
+            "default": ""
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "originalText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Originaltext"
+          },
+          "substitutions": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeIngredientSubstitution"
+            },
+            "type": "array",
+            "title": "Substitutions",
+            "default": []
+          },
+          "referenceId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Referenceid"
+          }
+        },
+        "type": "object",
+        "title": "RecipeIngredient"
+      },
+      "IngredientUnit-Input": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "pluralName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pluralname"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          },
+          "extras": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extras",
+            "default": {}
+          },
+          "fraction": {
+            "type": "boolean",
+            "title": "Fraction",
+            "default": true
+          },
+          "abbreviation": {
+            "type": "string",
+            "title": "Abbreviation",
+            "default": ""
+          },
+          "pluralAbbreviation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pluralabbreviation",
+            "default": ""
+          },
+          "useAbbreviation": {
+            "type": "boolean",
+            "title": "Useabbreviation",
+            "default": false
+          },
+          "aliases": {
+            "items": {
+              "$ref": "#/components/schemas/IngredientUnitAlias"
+            },
+            "type": "array",
+            "title": "Aliases",
+            "default": []
+          },
+          "standardQuantity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Standardquantity"
+          },
+          "standardUnit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Standardunit"
+          },
+          "createdAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Createdat"
+          },
+          "update_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Update At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "IngredientUnit"
+      },
+      "IngredientUnitAlias": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "IngredientUnitAlias"
+      },
+      "CreateIngredientUnit": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "pluralName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pluralname"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          },
+          "extras": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extras",
+            "default": {}
+          },
+          "fraction": {
+            "type": "boolean",
+            "title": "Fraction",
+            "default": true
+          },
+          "abbreviation": {
+            "type": "string",
+            "title": "Abbreviation",
+            "default": ""
+          },
+          "pluralAbbreviation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pluralabbreviation",
+            "default": ""
+          },
+          "useAbbreviation": {
+            "type": "boolean",
+            "title": "Useabbreviation",
+            "default": false
+          },
+          "aliases": {
+            "items": {
+              "$ref": "#/components/schemas/CreateIngredientUnitAlias"
+            },
+            "type": "array",
+            "title": "Aliases",
+            "default": []
+          },
+          "standardQuantity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Standardquantity"
+          },
+          "standardUnit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Standardunit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "CreateIngredientUnit"
+      },
+      "CreateIngredientUnitAlias": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "CreateIngredientUnitAlias"
+      },
+      "IngredientFood-Input": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "pluralName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pluralname"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          },
+          "extras": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extras",
+            "default": {}
+          },
+          "labelId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Labelid"
+          },
+          "aliases": {
+            "items": {
+              "$ref": "#/components/schemas/IngredientFoodAlias"
+            },
+            "type": "array",
+            "title": "Aliases",
+            "default": []
+          },
+          "substitutions": {
+            "items": {
+              "$ref": "#/components/schemas/IngredientFoodSubstitution"
+            },
+            "type": "array",
+            "title": "Substitutions",
+            "default": []
+          },
+          "householdsWithIngredientFood": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Householdswithingredientfood",
+            "default": []
+          },
+          "label": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MultiPurposeLabelSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
+          },
+          "createdAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Createdat"
+          },
+          "update_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Update At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "IngredientFood"
+      },
+      "IngredientFoodAlias": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "IngredientFoodAlias"
+      },
+      "IngredientFoodSubstitution": {
+        "properties": {
+          "substituteFoodId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Substitutefoodid"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "substituteFood": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IngredientFoodSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "IngredientFoodSubstitution"
+      },
+      "IngredientFoodSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "pluralName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pluralname"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "IngredientFoodSummary",
+        "description": "A trimmed projection of a food, with nothing on it that can recurse.\n\nSubstitutions reference this rather than the full IngredientFood, which would make\nPydantic walk food -> substitutions -> food forever and generate an equally circular\nTypeScript type."
+      },
+      "MultiPurposeLabelSummary": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "color": {
+            "type": "string",
+            "title": "Color",
+            "default": "#959595"
+          },
+          "groupId": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Groupid"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "groupId",
+          "id"
+        ],
+        "title": "MultiPurposeLabelSummary"
+      },
+      "CreateIngredientFood": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "pluralName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pluralname"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          },
+          "extras": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extras",
+            "default": {}
+          },
+          "labelId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Labelid"
+          },
+          "aliases": {
+            "items": {
+              "$ref": "#/components/schemas/CreateIngredientFoodAlias"
+            },
+            "type": "array",
+            "title": "Aliases",
+            "default": []
+          },
+          "substitutions": {
+            "items": {
+              "$ref": "#/components/schemas/CreateIngredientFoodSubstitution"
+            },
+            "type": "array",
+            "title": "Substitutions",
+            "default": []
+          },
+          "householdsWithIngredientFood": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Householdswithingredientfood",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "CreateIngredientFood"
+      },
+      "CreateIngredientFoodAlias": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "CreateIngredientFoodAlias"
+      },
+      "CreateIngredientFoodSubstitution": {
+        "properties": {
+          "substituteFoodId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Substitutefoodid"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "title": "CreateIngredientFoodSubstitution"
+      },
+      "Recipe-Input": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Userid"
+          },
+          "householdId": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Householdid"
+          },
+          "groupId": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Groupid"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug",
+            "default": ""
+          },
+          "image": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image"
+          },
+          "recipeServings": {
+            "type": "number",
+            "title": "Recipeservings",
+            "default": 0
+          },
+          "recipeYieldQuantity": {
+            "type": "number",
+            "title": "Recipeyieldquantity",
+            "default": 0
+          },
+          "recipeYield": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipeyield"
+          },
+          "totalTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totaltime"
+          },
+          "prepTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preptime"
+          },
+          "cookTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cooktime"
+          },
+          "performTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performtime"
+          },
+          "totalTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totaltimeseconds"
+          },
+          "prepTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preptimeseconds"
+          },
+          "performTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performtimeseconds"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "default": ""
+          },
+          "recipeCategory": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeCategory"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipecategory",
+            "default": []
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeTag"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags",
+            "default": []
+          },
+          "tools": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeTool"
+            },
+            "type": "array",
+            "title": "Tools",
+            "default": []
+          },
+          "rating": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rating"
+          },
+          "orgURL": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orgurl"
+          },
+          "dateAdded": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dateadded"
+          },
+          "dateUpdated": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dateupdated"
+          },
+          "createdAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Createdat"
+          },
+          "update_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Update At"
+          },
+          "lastMade": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastmade"
+          },
+          "recipeIngredient": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeIngredient-Input"
+            },
+            "type": "array",
+            "title": "Recipeingredient",
+            "default": []
+          },
+          "recipeInstructions": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeStep"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipeinstructions",
+            "default": []
+          },
+          "nutrition": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Nutrition"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "settings": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecipeSettings"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "assets": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeAsset"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assets",
+            "default": []
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeNote"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes",
+            "default": []
+          },
+          "extras": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extras",
+            "default": {}
+          },
+          "comments": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeCommentOut-Input"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comments",
+            "default": []
+          }
+        },
+        "type": "object",
+        "title": "Recipe"
+      },
+      "RecipeCategory": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "groupId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Groupid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "slug"
+        ],
+        "title": "RecipeCategory"
+      },
+      "RecipeTag": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "groupId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Groupid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "slug"
+        ],
+        "title": "RecipeTag"
+      },
+      "RecipeTool": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Id"
+          },
+          "groupId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Groupid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
+          },
+          "householdsWithTool": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Householdswithtool",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "slug"
+        ],
+        "title": "RecipeTool"
+      },
+      "RecipeStep": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "default": ""
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary",
+            "default": ""
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "ingredientReferences": {
+            "items": {
+              "$ref": "#/components/schemas/IngredientReferences"
+            },
+            "type": "array",
+            "title": "Ingredientreferences",
+            "default": []
+          },
+          "noteReferences": {
+            "items": {
+              "$ref": "#/components/schemas/NoteReference"
+            },
+            "type": "array",
+            "title": "Notereferences",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "RecipeStep"
+      },
+      "IngredientReferences": {
+        "properties": {
+          "referenceId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Referenceid"
+          }
+        },
+        "type": "object",
+        "title": "IngredientReferences",
+        "description": "A list of ingredient references."
+      },
+      "NoteReference": {
+        "properties": {
+          "referenceId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Referenceid"
+          }
+        },
+        "type": "object",
+        "title": "NoteReference"
+      },
+      "Nutrition": {
+        "properties": {
+          "calories": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calories"
+          },
+          "carbohydrateContent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Carbohydratecontent"
+          },
+          "cholesterolContent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cholesterolcontent"
+          },
+          "fatContent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fatcontent"
+          },
+          "fiberContent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fibercontent"
+          },
+          "proteinContent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Proteincontent"
+          },
+          "saturatedFatContent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Saturatedfatcontent"
+          },
+          "sodiumContent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sodiumcontent"
+          },
+          "sugarContent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sugarcontent"
+          },
+          "transFatContent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transfatcontent"
+          },
+          "unsaturatedFatContent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unsaturatedfatcontent"
+          }
+        },
+        "type": "object",
+        "title": "Nutrition"
+      },
+      "RecipeSettings": {
+        "properties": {
+          "public": {
+            "type": "boolean",
+            "title": "Public",
+            "default": false
+          },
+          "showNutrition": {
+            "type": "boolean",
+            "title": "Shownutrition",
+            "default": false
+          },
+          "showAssets": {
+            "type": "boolean",
+            "title": "Showassets",
+            "default": false
+          },
+          "landscapeView": {
+            "type": "boolean",
+            "title": "Landscapeview",
+            "default": false
+          },
+          "disableComments": {
+            "type": "boolean",
+            "title": "Disablecomments",
+            "default": true
+          },
+          "locked": {
+            "type": "boolean",
+            "title": "Locked",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "RecipeSettings"
+      },
+      "RecipeAsset": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "icon": {
+            "type": "string",
+            "title": "Icon"
+          },
+          "fileName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filename"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "icon"
+        ],
+        "title": "RecipeAsset"
+      },
+      "RecipeNote": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "referenceId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Referenceid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "text"
+        ],
+        "title": "RecipeNote"
+      },
+      "RecipeCommentOut-Input": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Id"
+          },
+          "recipeId": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Recipeid"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          },
+          "update_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Update At"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Userid"
+          },
+          "user": {
+            "$ref": "#/components/schemas/mealie__schema__recipe__recipe_comments__UserBase"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "recipeId",
+          "text",
+          "createdAt",
+          "update_at",
+          "userId",
+          "user"
+        ],
+        "title": "RecipeCommentOut"
+      },
+      "mealie__schema__recipe__recipe_comments__UserBase": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Id"
+          },
+          "username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Username"
+          },
+          "admin": {
+            "type": "boolean",
+            "title": "Admin"
+          },
+          "fullName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fullname"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "admin"
+        ],
+        "title": "UserBase"
+      },
+      "RecipeIngredientSubstitution": {
+        "properties": {
+          "substituteFoodId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Substitutefoodid"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "substituteFood": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IngredientFoodSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "RecipeIngredientSubstitution"
+      },
+      "CreatePlanEntry": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "entryType": {
+            "$ref": "#/components/schemas/PlanEntryType",
+            "default": "breakfast"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "default": ""
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "default": ""
+          },
+          "recipeId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipeid"
+          },
+          "recipeScale": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Recipescale",
+            "default": 1.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "date"
+        ],
+        "title": "CreatePlanEntry"
+      },
+      "PlanEntryType": {
+        "type": "string",
+        "enum": [
+          "breakfast",
+          "lunch",
+          "dinner",
+          "side",
+          "snack",
+          "drink",
+          "dessert"
+        ],
+        "title": "PlanEntryType"
+      }
+    }
+  }
+}

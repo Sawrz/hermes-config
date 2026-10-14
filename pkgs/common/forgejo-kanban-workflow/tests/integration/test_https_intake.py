@@ -90,7 +90,7 @@ class HttpsIntakeTests(NativeFixture):
                 if path == fixture.fail_path:
                     self.send_error(503)
                     return
-                prefix = "/api/v1/repos/nixos/nix-config"
+                prefix = "/api/v1/repos/homelab/nix-config"
                 payloads = {
                     "/api/v1/user": {"login": "system-admin-agent"},
                     prefix + "/issues": [fixture.source.issue] if fixture.issue_present else [],
@@ -113,8 +113,8 @@ class HttpsIntakeTests(NativeFixture):
                 if (
                     self.path
                     not in {
-                        "/api/v1/repos/nixos/nix-config/issues",
-                        "/api/v1/repos/nixos/nix-config/issues/12/comments",
+                        "/api/v1/repos/homelab/nix-config/issues",
+                        "/api/v1/repos/homelab/nix-config/issues/12/comments",
                     }
                     or self.headers.get("Authorization") != "token isolated-fixture-token"
                 ):
@@ -127,10 +127,10 @@ class HttpsIntakeTests(NativeFixture):
                         "body": payload["body"],
                         "user": {"login": "system-admin-agent"},
                         "updated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
-                        "issue_url": fixture.endpoint + "/api/v1/repos/nixos/nix-config/issues/12",
+                        "issue_url": fixture.endpoint + "/api/v1/repos/homelab/nix-config/issues/12",
                     }
                     row["html_url"] = (
-                        fixture.endpoint + f"/nixos/nix-config/issues/12#issuecomment-{row['id']}"
+                        fixture.endpoint + f"/homelab/nix-config/issues/12#issuecomment-{row['id']}"
                     )
                     fixture.comments.append(row)
                     body = json.dumps(row).encode()
@@ -144,7 +144,7 @@ class HttpsIntakeTests(NativeFixture):
                 fixture.source.issue.update(payload)
                 fixture.source.issue.update(
                     user={"login": "system-admin-agent"},
-                    html_url=fixture.endpoint + "/nixos/nix-config/issues/12",
+                    html_url=fixture.endpoint + "/homelab/nix-config/issues/12",
                 )
                 fixture.issue_present = True
                 if fixture.drop_write_response:
@@ -249,8 +249,8 @@ class HttpsIntakeTests(NativeFixture):
                 "body": body,
                 "user": {"login": author},
                 "updated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
-                "issue_url": self.endpoint + "/api/v1/repos/nixos/nix-config/issues/12",
-                "html_url": self.endpoint + "/nixos/nix-config/issues/12#issuecomment-41",
+                "issue_url": self.endpoint + "/api/v1/repos/homelab/nix-config/issues/12",
+                "html_url": self.endpoint + "/homelab/nix-config/issues/12#issuecomment-41",
             }
         ]
 
@@ -265,7 +265,7 @@ class HttpsIntakeTests(NativeFixture):
             "current_tag": "1.0.0",
             "candidate_tag": target,
             "change_route": {
-                "repository": "nixos/nix-containers",
+                "repository": "homelab/nix-containers",
                 "revision": "b" * 40,
                 "path": "modules/services/nixos/containerization/stacks/application.nix",
             },
@@ -275,7 +275,7 @@ class HttpsIntakeTests(NativeFixture):
             {
                 "inventory": {
                     "schema_version": 2,
-                    "repository": "nixos/nix-config",
+                    "repository": "homelab/nix-config",
                     "source_commit": "a" * 40,
                     "components": [row],
                 },
@@ -294,7 +294,7 @@ class HttpsIntakeTests(NativeFixture):
         client = workflow.ForgejoClient(self.endpoint, self.credential)
         intent = self.container_intent()
         proof = client.deliver_issue_intent(intent, allow_write=True)
-        self.assertEqual(proof["target_url"], self.endpoint + "/nixos/nix-config/issues/12")
+        self.assertEqual(proof["target_url"], self.endpoint + "/homelab/nix-config/issues/12")
         self.assertEqual(proof["intent_sha256"], intent["intent_sha256"])
         self.assertEqual(len(self.issue_writes), 1)
         self.assertEqual(client.deliver_issue_intent(intent, allow_write=False), proof)
@@ -444,7 +444,7 @@ class HttpsIntakeTests(NativeFixture):
         original = self.source.issue["body"]
         self.source.issue["user"] = {"login": "system-admin-agent"}
         self.source.issue["html_url"] = (
-            f"{self.endpoint}/nixos/nix-config/issues/{self.source.issue['number']}"
+            f"{self.endpoint}/homelab/nix-config/issues/{self.source.issue['number']}"
         )
         self.source.issue["state"] = "closed"
         client = workflow.ForgejoClient(self.endpoint, self.credential)
@@ -496,7 +496,7 @@ class HttpsIntakeTests(NativeFixture):
         (repo / "flake.nix").write_text(
             """{ outputs = { self }: {
           sourceRepositories.deployment = {
-            root = self.outPath; repository = "nixos/nix-config"; revision = self.rev;
+            root = self.outPath; repository = "homelab/nix-config"; revision = self.rev;
           };
           nixosConfigurations.fixture.options.custom.containers.application.images = {
             definitionsWithLocations = [];
@@ -639,7 +639,7 @@ class HttpsIntakeTests(NativeFixture):
         self.assertEqual(len(self.kanban.show(task_id)["comments"]), len(before) + 1)
         self.kanban._run(["complete", task_id, "--summary", "Fixture work completed"])
         self.comment(
-            "Handled. <!-- hermes:handled-comment repo=nixos/nix-config "
+            "Handled. <!-- hermes:handled-comment repo=homelab/nix-config "
             "source=comment:40 card=t_abcdef12 -->",
             "system-admin-agent",
         )
@@ -655,11 +655,11 @@ class HttpsIntakeTests(NativeFixture):
     def test_source_failure_keeps_cursor_and_pending_routing_retries(self):
         self.collect()
         cursor = self.journal.read()["cursor.json"]
-        self.fail_path = "/api/v1/repos/nixos/nix-config/issues/comments"
+        self.fail_path = "/api/v1/repos/homelab/nix-config/issues/comments"
         self.collect(success=False)
         self.assertEqual(self.journal.read()["cursor.json"], cursor)
         self.assertTrue(self.journal.read()["health.json"]["poll_degraded"])
-        self.fail_path = "/api/v1/repos/nixos/nix-config/issues/12"
+        self.fail_path = "/api/v1/repos/homelab/nix-config/issues/12"
         self.reconcile_cli(success=False)
         self.assertEqual(len(self.journal.pending()), 1)
         self.assertEqual(self.dispatch().spawned, [])

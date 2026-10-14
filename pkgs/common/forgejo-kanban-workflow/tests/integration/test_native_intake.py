@@ -118,7 +118,7 @@ class NativeFixture(unittest.TestCase):
         import subprocess
 
         root = Path(self.tmp.name)
-        origin = "ssh://git@fixture.invalid/nixos/nix-config.git"
+        origin = "ssh://git@fixture.invalid/homelab/nix-config.git"
         subprocess.run(["git", "-C", str(repo), "remote", "add", "origin", origin], check=True)
         key = root / "key"
         subprocess.run(["ssh-keygen", "-q", "-t", "ed25519", "-N", "", "-f", str(key)], check=True)
@@ -133,7 +133,7 @@ class NativeFixture(unittest.TestCase):
                     "jobs": {
                         "nix-config-pull": {
                             "origin": origin,
-                            "repository": "nixos/nix-config",
+                            "repository": "homelab/nix-config",
                             "ref": "refs/heads/master",
                             "destination": str(repo),
                             "transport": "ssh",
@@ -238,7 +238,7 @@ class NativeIntakeTests(NativeFixture):
                 "create",
                 "Existing implementation",
                 "--body",
-                "Forgejo authority: https://git.example.test/nixos/nix-config/issues/12",
+                "Forgejo authority: https://git.example.test/homelab/nix-config/issues/12",
                 "--assignee",
                 "system-admin",
                 "--json",

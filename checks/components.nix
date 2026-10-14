@@ -63,6 +63,15 @@ let
         ) cookingEval.config.systemd.services.hermes-agent-chef.restartTriggers
       );
       cookingPackages = cookingEval.config.custom.services.hermes.capabilityPackages;
+      mealieHelpers =
+        (import ../modules/services/nixos/agents/capabilities/sandbox.nix {
+          inherit lib pkgs;
+        })
+          {
+            name = "mealie-check";
+            skills = cookingPackages."agentSkill:mealie-api".provides.skills;
+            runtimePackages = [ ];
+          };
     in
     assert cookingPackages ? "agentSkill:mealie-api";
     assert cookingPackages ? "agentSkill:grocy-api";
@@ -97,7 +106,7 @@ let
         (inputs.hermes-config + "/modules/services/nixos/agents/skills/grocy-api")
       } "$TMPDIR/grocy-api"
       chmod -R u+w "$TMPDIR/mealie-api" "$TMPDIR/grocy-api"
-      ${pkgs.python3}/bin/python3 -m unittest discover "$TMPDIR/mealie-api/tests" -v
+      ${mealieHelpers.tree}/bin/python3 -m unittest discover "$TMPDIR/mealie-api/tests" -v
       ${pkgs.python3}/bin/python3 -m unittest discover "$TMPDIR/grocy-api/tests" -v
       touch $out
     '';

@@ -37,7 +37,7 @@ class InventoryProducerTests(unittest.TestCase):
         (self.repo / "flake.nix").write_text("""{
           outputs = { self }: {
             sourceRepositories.deployment = {
-              root = self.outPath; repository = "nixos/nix-config"; revision = self.rev;
+              root = self.outPath; repository = "homelab/nix-config"; revision = self.rev;
             };
             nixosConfigurations.fixture.options.custom.containers.application.images = {
               definitionsWithLocations = [];
@@ -72,7 +72,7 @@ class InventoryProducerTests(unittest.TestCase):
               declarations = [ "${self.outPath}/flake.nix" ]; };
           in {
             sourceRepositories.deployment = {
-              root = self.outPath; repository = "nixos/nix-config"; revision = self.rev;
+              root = self.outPath; repository = "homelab/nix-config"; revision = self.rev;
             };
             nixosConfigurations.fixture = {
               options.custom.containers.wolf = {
@@ -107,7 +107,7 @@ class InventoryProducerTests(unittest.TestCase):
             self.assertEqual(
                 row["change_route"],
                 {
-                    "repository": "nixos/nix-config",
+                    "repository": "homelab/nix-config",
                     "revision": target,
                     "path": "flake.nix",
                 },
@@ -204,7 +204,7 @@ class InventoryProducerTests(unittest.TestCase):
         self.api_base = f"https://localhost:{server.server_port}"
         inventory = {
             "schema_version": 2,
-            "repository": "nixos/nix-config",
+            "repository": "homelab/nix-config",
             "source_commit": self.target,
             "components": [
                 {
@@ -214,7 +214,7 @@ class InventoryProducerTests(unittest.TestCase):
                     "image": image,
                     "current_tag": "1.0.0",
                     "change_route": {
-                        "repository": "nixos/nix-containers",
+                        "repository": "homelab/nix-containers",
                         "revision": self.target,
                         "path": "modules/application.nix",
                     },
@@ -303,7 +303,7 @@ class InventoryProducerTests(unittest.TestCase):
         for route in (
             None,
             {
-                "repository": "nixos/nix-config",
+                "repository": "homelab/nix-config",
                 "revision": self.target,
                 "path": "flake.nix",
             },
@@ -441,7 +441,7 @@ class InventoryProducerTests(unittest.TestCase):
                 }
             )
         )
-        origin = "ssh://git@fixture.invalid/nixos/nix-config.git"
+        origin = "ssh://git@fixture.invalid/homelab/nix-config.git"
         self.git("remote", "add", "origin", origin)
         identity = self.root / "fixture-key"
         identity.write_text("fixture only; never used for network")
@@ -456,7 +456,7 @@ class InventoryProducerTests(unittest.TestCase):
                     "jobs": {
                         "nix-config-pull": {
                             "origin": origin,
-                            "repository": "nixos/nix-config",
+                            "repository": "homelab/nix-config",
                             "ref": "refs/heads/master",
                             "destination": str(self.repo),
                             "transport": "ssh",
@@ -520,7 +520,7 @@ class InventoryProducerTests(unittest.TestCase):
         )
         result = m.refresh_container_inventory(self.repo, self.target)
         self.assertEqual(result["source_commit"], self.target)
-        self.assertEqual(result["repository"], "nixos/nix-config")
+        self.assertEqual(result["repository"], "homelab/nix-config")
         self.assertEqual(
             [(row["service"], row["component"]) for row in result["components"]],
             [("application", "database"), ("application", "main")],

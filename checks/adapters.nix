@@ -26,7 +26,7 @@ let
             custom.services.hermes = {
               managedSourceRepositories.project = {
                 root = inputs.hermes-config.outPath;
-                repository = "nixos/hermes-config";
+                repository = "homelab/hermes-config";
                 board = "fixture";
                 assignee = "system-admin";
               };
@@ -48,7 +48,7 @@ let
               endpoint = "https://git.example.test";
               credentialFiles.credential = "/test-secrets/reviewer";
               capabilities = [ "workflow" ];
-              scope.include = [ "nixos/nix-config" ];
+              scope.include = [ "homelab/nix-config" ];
             };
             custom.services.hermes.repositoryAuthority = {
               ownerProfile = "system-admin";
@@ -56,7 +56,7 @@ let
               repositories.fixture = {
                 stateSubdirectory = "";
                 id = "fixture-nix-config";
-                repository = "nixos/nix-config";
+                repository = "homelab/nix-config";
                 defaultBranch = "master";
                 namespace = "nix-config";
                 workflowKeyPrefix = "forgejo";
@@ -76,7 +76,7 @@ let
                 endpoint = "https://git.example.test";
                 credentialFiles.credential = "/test-secrets/forgejo-token";
                 capabilities = [ "workflow" ];
-                scope.include = [ "nixos/nix-config" ];
+                scope.include = [ "homelab/nix-config" ];
               };
               serviceIntegrations.forgejo-to-kanban.settings = {
                 board = "homelab-devops";
@@ -160,7 +160,7 @@ let
             custom.services.hermes = {
               managedSourceRepositories.project = {
                 root = inputs.hermes-config.outPath;
-                repository = "nixos/hermes-config";
+                repository = "homelab/hermes-config";
                 board = "fixture";
                 assignee = "system-admin";
               };
@@ -185,7 +185,7 @@ let
               repositories.fixture = {
                 stateSubdirectory = "";
                 id = "fixture-nix-config";
-                repository = "nixos/nix-config";
+                repository = "homelab/nix-config";
                 defaultBranch = "master";
                 namespace = "nix-config";
                 workflowKeyPrefix = "forgejo";
@@ -206,7 +206,7 @@ let
                   endpoint = "https://git.example.test";
                   credentialFiles.credential = "/test-secrets/forgejo-token";
                   capabilities = [ "workflow" ];
-                  scope.include = [ "nixos/nix-config" ];
+                  scope.include = [ "homelab/nix-config" ];
                 };
                 serviceIntegrations = {
                   forgejo-event-ingest = true;
@@ -222,7 +222,7 @@ let
                   endpoint = "https://git.example.test";
                   credentialFiles.credential = "/test-secrets/forgejo-reviewer-token";
                   capabilities = [ "workflow" ];
-                  scope.include = [ "nixos/nix-config" ];
+                  scope.include = [ "homelab/nix-config" ];
                 };
               };
             };
@@ -364,7 +364,7 @@ let
             custom.services.hermes = {
               managedSourceRepositories.project = {
                 root = inputs.hermes-config.outPath;
-                repository = "nixos/hermes-config";
+                repository = "homelab/hermes-config";
                 board = "fixture";
                 assignee = "system-admin";
               };
@@ -383,7 +383,7 @@ let
               endpoint = "https://forgejo.example.test";
               credentialFiles.credential = "/test-secrets/reviewer";
               capabilities = [ "workflow" ];
-              scope.include = [ "nixos/nix-config" ];
+              scope.include = [ "homelab/nix-config" ];
             };
             custom.services.hermes.repositoryAuthority = {
               ownerProfile = "system-admin";
@@ -391,7 +391,7 @@ let
               repositories.fixture = {
                 stateSubdirectory = "";
                 id = "fixture-nix-config";
-                repository = "nixos/nix-config";
+                repository = "homelab/nix-config";
                 defaultBranch = "master";
                 namespace = "nix-config";
                 workflowKeyPrefix = "forgejo";
@@ -417,7 +417,7 @@ let
                 endpoint = "https://forgejo.example.test";
                 credentialFiles.credential = "/test-secrets/forgejo-system-admin";
                 capabilities = [ "workflow" ];
-                scope.include = [ "nixos/nix-config" ];
+                scope.include = [ "homelab/nix-config" ];
               };
               serviceIntegrations = {
                 forgejo-event-ingest = true;
@@ -527,7 +527,7 @@ let
               root = inputs.hermes-config.outPath;
               board = "homelab-devops";
               assignee = "system-admin";
-              repository = "nixos/nix-config";
+              repository = "homelab/nix-config";
             };
             services.hermes-agent.profiles.system-admin = {
               serviceIntegrations.forgejo-pr-lifecycle = true;
@@ -535,7 +535,7 @@ let
                 endpoint = "https://forgejo.example.test";
                 credentialFiles.credential = "/test-secrets/forgejo-system-admin";
                 capabilities = [ "workflow" ];
-                scope.include = [ "nixos/nix-config" ];
+                scope.include = [ "homelab/nix-config" ];
               };
             };
           }

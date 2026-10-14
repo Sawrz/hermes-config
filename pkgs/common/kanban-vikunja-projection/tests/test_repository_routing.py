@@ -32,7 +32,7 @@ class RepositoryRoutingTests(unittest.TestCase):
             **original,
             "id": "hermes-config",
             "namespace": "hermes-config",
-            "repository": "nixos/hermes-config",
+            "repository": "homelab/hermes-config",
             "default_branch": "main",
         }
         self.contracts = [original, other]

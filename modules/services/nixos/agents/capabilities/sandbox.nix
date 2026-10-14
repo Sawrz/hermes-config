@@ -9,22 +9,32 @@
 }:
 let
   root = "/run/hermes-capabilities";
-  packages = lib.unique ([ pkgs.python3 ] ++ runtimePackages);
+  python = import ./helper-python.nix { inherit pkgs skills; };
+  packages = lib.unique ([ python ] ++ runtimePackages);
   runtime = pkgs.buildEnv {
     name = "hermes-${name}-helper-runtime";
     paths = packages;
     pathsToLink = [ "/bin" ];
     postBuild = ''mkdir -p "$out/bin"'';
   };
-  checks = map (package: {
-    cwd = root;
-    argv = [
-      (lib.getExe package)
-      "--help"
-    ];
-  }) runtimePackages;
+  checks =
+    map (package: {
+      cwd = root;
+      argv = [
+        (lib.getExe package)
+        "--help"
+      ];
+    }) runtimePackages
+    ++ lib.optional (skills ? mealie-api) {
+      cwd = root;
+      argv = [
+        "python3"
+        "-c"
+        "import jsonschema, rfc3339_validator"
+      ];
+    };
   manifest = pkgs.writeText "hermes-${name}-helper-checks.json" (builtins.toJSON checks);
-  tree = pkgs.runCommand "hermes-${name}-helpers" { nativeBuildInputs = [ pkgs.python3 ]; } ''
+  tree = pkgs.runCommand "hermes-${name}-helpers" { nativeBuildInputs = [ python ]; } ''
     mkdir -p "$out"
     ${lib.concatStringsSep "\n" (
       lib.mapAttrsToList (skillName: skill: ''
@@ -42,8 +52,8 @@ let
         }
       '') skills
     )}
-    ${pkgs.python3}/bin/python3 ${./validate-sandbox-skill.py} "$out" > "$TMPDIR/script-checks.json"
-    ${pkgs.python3}/bin/python3 - "$TMPDIR/script-checks.json" ${manifest} "$out/checks.json" <<'PY'
+    ${python}/bin/python3 ${./validate-sandbox-skill.py} "$out" > "$TMPDIR/script-checks.json"
+    ${python}/bin/python3 - "$TMPDIR/script-checks.json" ${manifest} "$out/checks.json" <<'PY'
     import json, sys
     from pathlib import Path
     Path(sys.argv[3]).write_text(json.dumps(json.loads(Path(sys.argv[1]).read_text()) + json.loads(Path(sys.argv[2]).read_text())))
@@ -54,7 +64,7 @@ let
   closure = pkgs.closureInfo {
     rootPaths = [
       runtime
-      pkgs.python3
+      python
     ]
     ++ extraStorePaths;
   };
@@ -72,7 +82,7 @@ in
     "${store}:/nix/store:ro"
   ];
   readiness = [
-    "${pkgs.python3}/bin/python3"
+    "${python}/bin/python3"
     "${root}/readiness.py"
   ];
 }

@@ -20,7 +20,7 @@ class NativePrLifecycleTests(NativeFixture):
         reviewer_home.mkdir()
         (reviewer_home / "config.yaml").write_text("{}\n")
         head = "a" * 40
-        url = "https://git.example.test/nixos/nix-config/pulls/200"
+        url = "https://git.example.test/homelab/nix-config/pulls/200"
         anchor = self.kanban._run(
             [
                 "create",

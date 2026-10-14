@@ -20,7 +20,7 @@ class LegacyTests(unittest.TestCase):
         )["task"]
         self.native = kanban_task()
         self.native["body"] = self.native["body"].replace("200", "172") + (
-            "PR workflow: native-v1\nForgejo authority: https://git.wrzalek.com/nixos/nix-config/pulls/172\n"
+            "PR workflow: native-v1\nForgejo authority: https://git.wrzalek.com/homelab/nix-config/pulls/172\n"
             "Vikunja legacy task: 1587\nVikunja legacy creator: bot-system-admin\n"
             "Vikunja legacy root: t_05367b21\n"
         )

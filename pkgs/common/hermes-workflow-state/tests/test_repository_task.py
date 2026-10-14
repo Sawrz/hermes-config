@@ -29,21 +29,21 @@ class ReviewRoutingTests(unittest.TestCase):
             contract = self.contract | {
                 "id": name,
                 "namespace": name,
-                "repository": f"nixos/{name}",
+                "repository": f"homelab/{name}",
             }
             (self.registry / f"{name}.json").write_text(json.dumps(contract))
 
     def test_overlapping_pr_numbers_and_changed_heads_are_distinct(self):
-        first = review_handoff(self.registry, "nixos/nix-config", 7, "a" * 40)
-        other = review_handoff(self.registry, "nixos/hermes-config", 7, "a" * 40)
-        changed = review_handoff(self.registry, "nixos/nix-config", 7, "b" * 40)
-        self.assertEqual(first, review_handoff(self.registry, "nixos/nix-config", 7, "a" * 40))
+        first = review_handoff(self.registry, "homelab/nix-config", 7, "a" * 40)
+        other = review_handoff(self.registry, "homelab/hermes-config", 7, "a" * 40)
+        changed = review_handoff(self.registry, "homelab/nix-config", 7, "b" * 40)
+        self.assertEqual(first, review_handoff(self.registry, "homelab/nix-config", 7, "a" * 40))
         self.assertEqual(len({item["idempotency_key"] for item in (first, other, changed)}), 3)
         self.assertFalse(first["dispatched"])
-        self.assertTrue(first["url"].endswith("/nixos/nix-config/pulls/7"))
+        self.assertTrue(first["url"].endswith("/homelab/nix-config/pulls/7"))
 
     def test_wrong_repository_or_head_is_rejected(self):
-        for repository, head in (("other/project", "a" * 40), ("nixos/nix-config", "main")):
+        for repository, head in (("other/project", "a" * 40), ("homelab/nix-config", "main")):
             with self.assertRaises(ProtocolError):
                 review_handoff(self.registry, repository, 7, head)
 
@@ -52,7 +52,7 @@ class ReviewRoutingTests(unittest.TestCase):
             (self.registry / "nix-config.json").read_bytes()
         )
         with self.assertRaisesRegex(ProtocolError, "colliding"):
-            review_handoff(self.registry, "nixos/nix-config", 7, "a" * 40)
+            review_handoff(self.registry, "homelab/nix-config", 7, "a" * 40)
 
     def test_paperclip_cannot_reinterpret_existing_hermes_state(self):
         state = self.root / "state"

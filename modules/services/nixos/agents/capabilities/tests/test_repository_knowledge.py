@@ -132,7 +132,7 @@ class RepositoryKnowledgeTests(unittest.TestCase):
         for name in ["repository-knowledge", "forgejo-pr-lifecycle", "nix-maintenance-protocol"]:
             body = (SKILLS / name / "SKILL.md").read_text()
             for forbidden in [
-                "nixos/nix-config",
+                "homelab/nix-config",
                 "git.wrzalek.com",
                 "Vikunja project: 110",
                 "Sandro",

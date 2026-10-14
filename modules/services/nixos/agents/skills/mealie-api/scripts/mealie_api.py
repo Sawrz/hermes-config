@@ -460,23 +460,20 @@ class MealieClient:
         return schema
 
     @staticmethod
-    def _request_object_contract(
-        schema: Mapping[str, Any], request_schema: Mapping[str, Any]
-    ) -> tuple[Mapping[str, Any], frozenset[str]]:
-        node = request_schema
-        if "$ref" in node:
-            if set(node) != {"$ref"}:
-                raise SchemaDriftError("write schema reference siblings are unsupported")
-            reference = node["$ref"]
-            prefix = "#/components/schemas/"
-            if not isinstance(reference, str) or not reference.startswith(prefix):
-                raise SchemaDriftError("write schema contains an unsupported reference")
-            name = reference.removeprefix(prefix)
-            schemas = schema.get("components", {}).get("schemas", {})
-            node = schemas.get(name) if isinstance(schemas, Mapping) else None
-            if not isinstance(node, Mapping) or "$ref" in node:
-                raise SchemaDriftError("write schema reference is missing or recursive")
-        annotation_keywords = {
+    def _request_validator(schema: Mapping[str, Any], request_schema: Mapping[str, Any]):
+        # Import only for writes: --help and read-only operations need no validator.
+        from jsonschema import Draft202012Validator, FormatChecker
+        from jsonschema.exceptions import SchemaError
+        from referencing import Registry
+        from uuid import UUID
+
+        checker = FormatChecker(formats=["date", "date-time", "uuid"])
+
+        @checker.checks("uuid4", raises=ValueError)
+        def is_uuid4(value):
+            return not isinstance(value, str) or UUID(value).version == 4
+
+        annotations = {
             "default",
             "deprecated",
             "description",
@@ -486,83 +483,120 @@ class MealieClient:
             "title",
             "writeOnly",
         }
-        allowed_root_keywords = {"type", "properties", "required", *annotation_keywords}
-        if any(keyword in node for keyword in ("allOf", "anyOf", "oneOf")):
-            raise SchemaDriftError("write schema composition is outside the bounded adapter")
-        if set(node) - allowed_root_keywords:
-            raise SchemaDriftError("write schema root exceeds the bounded object contract")
-        if node.get("type") != "object":
-            raise SchemaDriftError("write schema must be an explicit object")
-        properties = node.get("properties")
-        required = node.get("required", [])
-        if not isinstance(properties, Mapping) or not properties:
-            raise SchemaDriftError("write schema must declare supported payload fields")
-        if (
-            not isinstance(required, list)
-            or any(not isinstance(field, str) for field in required)
-            or len(set(required)) != len(required)
-            or any(field not in properties for field in required)
-            or any(not isinstance(value, Mapping) for value in properties.values())
-        ):
-            raise SchemaDriftError("write schema field contract is malformed")
-        supported_types = {"array", "boolean", "integer", "number", "object", "string"}
-        scalar_item_types = {"boolean", "integer", "number", "string"}
-        for field, field_schema in properties.items():
-            items = field_schema.get("items")
-            field_type = field_schema.get("type")
-            allowed_keywords = {"type", *annotation_keywords}
-            if field_type == "array":
-                allowed_keywords.add("items")
-            if (
-                "$ref" in field_schema
-                or any(keyword in field_schema for keyword in ("allOf", "anyOf", "oneOf"))
-                or field_type not in supported_types
-                or bool(set(field_schema) - allowed_keywords)
-                or (field_type != "array" and "items" in field_schema)
-                or (
-                    field_type == "array"
-                    and "items" in field_schema
-                    and (
-                        not isinstance(items, Mapping)
-                        or set(items) != {"type"}
-                        or items.get("type") not in scalar_item_types
-                    )
-                )
-            ):
-                raise SchemaDriftError(
-                    f"write field {field!r} exceeds the bounded top-level contract"
-                )
-        return properties, frozenset(required)
+        supported = annotations | {
+            "$ref",
+            "type",
+            "properties",
+            "required",
+            "additionalProperties",
+            "items",
+            "allOf",
+            "anyOf",
+            "oneOf",
+            "enum",
+            "const",
+            "format",
+            "minimum",
+            "maximum",
+            "exclusiveMinimum",
+            "exclusiveMaximum",
+            "multipleOf",
+            "minLength",
+            "maxLength",
+            "pattern",
+            "minItems",
+            "maxItems",
+            "uniqueItems",
+            "minProperties",
+            "maxProperties",
+        }
+        component_root = schema.get("components", {})
+        components = (
+            component_root.get("schemas", {}) if isinstance(component_root, Mapping) else {}
+        )
+        resolved: dict[str, Any] = {}
+        count = 0
 
-    @staticmethod
-    def _field_matches_contract(field: str, node: Mapping[str, Any], value: Any) -> bool:
-        if "$ref" in node or any(keyword in node for keyword in ("allOf", "anyOf", "oneOf")):
+        def visit(node, depth=0):
+            nonlocal count
+            count += 1
+            if depth > 64 or count > 4096:
+                raise SchemaDriftError("write schema exceeds validation limits")
+            if isinstance(node, bool):
+                return
+            if not isinstance(node, Mapping) or set(node) - supported:
+                raise SchemaDriftError("write schema contains unsupported keywords")
+            if "format" in node and node["format"] not in checker.checkers:
+                raise SchemaDriftError("write schema contains an unsupported format")
+            if "$ref" in node:
+                reference = node["$ref"]
+                prefix = "#/components/schemas/"
+                if (
+                    not isinstance(reference, str)
+                    or not reference.startswith(prefix)
+                    or "/" in reference[len(prefix) :]
+                    or re.search(r"~(?![01])", reference)
+                ):
+                    raise SchemaDriftError("write schema requires a local component reference")
+                name = reference[len(prefix) :].replace("~1", "/").replace("~0", "~")
+                if not isinstance(components, Mapping) or name not in components:
+                    raise SchemaDriftError("write schema reference is missing")
+                if str(schema.get("openapi", "")).startswith("3.0.") and (
+                    set(node) - annotations - {"$ref"}
+                ):
+                    raise SchemaDriftError("OpenAPI 3.0 reference constraints are unsupported")
+                if name not in resolved:
+                    # Mark before visiting so recursive recipe/ingredient models terminate.
+                    Draft202012Validator.check_schema(components[name])
+                    resolved[name] = components[name]
+                    visit(components[name], depth + 1)
+            for child in node.get("properties", {}).values():
+                visit(child, depth + 1)
+            for keyword in ("items", "additionalProperties"):
+                if keyword in node:
+                    visit(node[keyword], depth + 1)
+            for keyword in ("allOf", "anyOf", "oneOf"):
+                for child in node.get(keyword, []):
+                    visit(child, depth + 1)
+
+        def declared_fields(node, seen):
+            if not isinstance(node, Mapping):
+                return set()
+            fields = set(node.get("properties", {}))
+            reference = node.get("$ref")
+            if reference is not None and reference not in seen:
+                name = (
+                    reference[len("#/components/schemas/") :].replace("~1", "/").replace("~0", "~")
+                )
+                seen.add(reference)
+                fields.update(declared_fields(resolved[name], seen))
+            for keyword in ("allOf", "anyOf", "oneOf"):
+                for child in node.get(keyword, []):
+                    fields.update(declared_fields(child, seen))
+            return fields
+
+        try:
+            # Check the root first so malformed keyword values never reach traversal.
+            Draft202012Validator.check_schema(request_schema)
+            # Referenced schemas are checked separately; components is OpenAPI metadata.
+            visit(request_schema)
+            fields = declared_fields(request_schema, set())
+            if not fields:
+                raise SchemaDriftError("write schema must declare supported payload fields")
+            document = {
+                "type": "object",
+                "allOf": [request_schema],
+                "unevaluatedProperties": False,
+                "components": {"schemas": resolved},
+            }
+            # An empty registry has no network retrieval. Only checked local refs exist.
+            return Draft202012Validator(
+                document, registry=Registry(), format_checker=checker
+            ), fields
+        except (SchemaError, TypeError, AttributeError, RecursionError) as exc:
             raise SchemaDriftError(
-                f"write field {field!r} uses schema features outside the bounded adapter"
-            )
-        expected = node.get("type")
-        checks = {
-            "array": lambda: isinstance(value, list),
-            "boolean": lambda: type(value) is bool,
-            "integer": lambda: type(value) is int,
-            "number": lambda: type(value) in {int, float},
-            "object": lambda: isinstance(value, Mapping),
-            "string": lambda: isinstance(value, str),
-        }
-        if expected not in checks:
-            raise SchemaDriftError(f"write field {field!r} has no supported exact JSON type")
-        if not checks[expected]():
-            return False
-        if expected != "array" or "items" not in node:
-            return True
-        item_type = node["items"]["type"]
-        item_checks = {
-            "boolean": lambda item: type(item) is bool,
-            "integer": lambda item: type(item) is int,
-            "number": lambda item: type(item) in {int, float},
-            "string": lambda item: isinstance(item, str),
-        }
-        return all(item_checks[item_type](item) for item in value)
+                "live write schema is malformed or exceeds validation limits"
+            ) from exc
 
     def _validate_payload_schema(
         self,
@@ -571,25 +605,31 @@ class MealieClient:
         path: str,
         payload: Mapping[str, Any],
     ) -> None:
+        from jsonschema.exceptions import ValidationError as JsonValidationError
+        from referencing.exceptions import Unresolvable
+
         operation = self._operation(schema, path, method)
         content = operation.get("requestBody", {}).get("content", {}) if operation else {}
         media = content.get("application/json") if isinstance(content, Mapping) else None
         request_schema = media.get("schema") if isinstance(media, Mapping) else None
         if not isinstance(request_schema, Mapping):
             raise SchemaDriftError("live write operation has no JSON request schema")
-        properties, required = self._request_object_contract(schema, request_schema)
-        if any(field not in payload for field in required):
-            raise ValidationError("write payload is missing fields required by the live schema")
-        undeclared = set(payload) - set(properties)
-        if undeclared:
+        validator, fields = self._request_validator(schema, request_schema)
+        if set(payload) - fields:
             raise ValidationError(
                 "write payload contains fields not declared by the live operation"
             )
-        if any(
-            not self._field_matches_contract(field, properties[field], value)
-            for field, value in payload.items()
-        ):
-            raise ValidationError("write payload field type differs from the live operation")
+        try:
+            validator.validate(payload)
+        except JsonValidationError:
+            # Library messages include payload values; keep private recipe data out of errors.
+            raise ValidationError(
+                "write payload does not satisfy the live operation schema"
+            ) from None
+        except (Unresolvable, RecursionError) as exc:
+            raise SchemaDriftError(
+                "write schema reference cannot be validated within limits"
+            ) from exc
 
     def list_all(
         self, path: str, *, query: Mapping[str, Any] | None = None, cap: int = DEFAULT_PAGE_CAP
@@ -837,9 +877,25 @@ class MealieClient:
 
     @staticmethod
     def _verify_readback(record: Any, payload: Mapping[str, Any]) -> Any:
+        def matches(actual, expected):
+            if isinstance(expected, dict):
+                return isinstance(actual, dict) and all(
+                    key in actual and matches(actual[key], value) for key, value in expected.items()
+                )
+            if isinstance(expected, list):
+                return (
+                    isinstance(actual, list)
+                    and len(actual) == len(expected)
+                    and all(matches(item, wanted) for item, wanted in zip(actual, expected))
+                )
+            # JSON booleans must not compare equal to numeric 0 or 1.
+            if isinstance(actual, bool) != isinstance(expected, bool):
+                return False
+            return actual == expected
+
         if not isinstance(record, dict) or not payload:
             raise ReadbackError("readback is not a verifiable JSON object")
-        if any(key not in record or record[key] != value for key, value in payload.items()):
+        if not matches(record, payload):
             raise ReadbackError("readback does not match the requested fields")
         return record
 

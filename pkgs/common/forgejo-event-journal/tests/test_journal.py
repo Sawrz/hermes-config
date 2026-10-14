@@ -68,8 +68,8 @@ class FakeClient:
                 [
                     {
                         "id": 2775,
-                        "issue_url": ORIGIN + "/api/v1/repos/nixos/nix-config/issues/200",
-                        "html_url": ORIGIN + "/nixos/nix-config/issues/200#issuecomment-2775",
+                        "issue_url": ORIGIN + "/api/v1/repos/homelab/nix-config/issues/200",
+                        "html_url": ORIGIN + "/homelab/nix-config/issues/200#issuecomment-2775",
                         "updated_at": REVISION,
                         "created_at": REVISION,
                         "body": "Please fix this",
@@ -321,8 +321,8 @@ class JournalTests(unittest.TestCase):
                                 "body": "Please fix this",
                             }
                             for kind, comment_id, target in [
-                                ("issue", 2775, ORIGIN + "/nixos/nix-config/issues/200"),
-                                ("pull_request", 2776, ORIGIN + "/nixos/nix-config/pulls/199"),
+                                ("issue", 2775, ORIGIN + "/homelab/nix-config/issues/200"),
+                                ("pull_request", 2776, ORIGIN + "/homelab/nix-config/pulls/199"),
                             ]
                         ]
                     )
@@ -350,7 +350,7 @@ class JournalTests(unittest.TestCase):
                 return [{"id": i} for i in range(50)] if query["page"] == 1 else [{"id": 51}]
 
             client.get = get
-            self.assertEqual(len(list(client.pages("/repos/nixos/nix-config/issues"))), 51)
+            self.assertEqual(len(list(client.pages("/repos/homelab/nix-config/issues"))), 51)
             self.assertEqual(calls, [1, 2])
             with self.assertRaisesRegex(journal.InputError, "allowlist"):
                 journal.ForgejoClient.get(client, "/repos/other/repo/issues")
@@ -369,7 +369,7 @@ class JournalTests(unittest.TestCase):
             self.assertIs(client._opener, opener.open)
             self.assertIsNone(
                 handler.redirect_request(
-                    urllib.request.Request(ORIGIN + "/api/v1/repos/nixos/nix-config"),
+                    urllib.request.Request(ORIGIN + "/api/v1/repos/homelab/nix-config"),
                     None,
                     302,
                     "redirect",

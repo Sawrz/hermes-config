@@ -45,7 +45,7 @@ def event(
     row = {
         "schema_version": 2,
         "event_id": "",
-        "repository": "nixos/nix-config",
+        "repository": "homelab/nix-config",
         "kind": kind,
         "source_key": f"fixture:1:{event_seed.removeprefix('fj-')}",
         "revision": "2026-08-28T05:00:00Z",
@@ -53,7 +53,7 @@ def event(
         "target": {
             "kind": target_kind,
             "number": number,
-            "url": f"https://git.example.test/nixos/nix-config/{segment}/{number}",
+            "url": f"https://git.example.test/homelab/nix-config/{segment}/{number}",
         },
         "disposition": disposition,
         "summary": "source event",
@@ -88,7 +88,7 @@ class FakeForgejo:
             {
                 "target": row["target"]["kind"],
                 "number": row["target"]["number"],
-                "url": f"https://git.example.test/nixos/nix-config/pulls/{row['target']['number']}",
+                "url": f"https://git.example.test/homelab/nix-config/pulls/{row['target']['number']}",
                 "head": HEAD if row["target"]["kind"] == "pull_request" else None,
                 "pull": {"number": row["target"]["number"], "title": "Fix workflow"},
                 "reviews": [
@@ -156,7 +156,7 @@ class ValidationTests(unittest.TestCase):
     def test_forgejo_actions_requires_positive_execution_evidence(self) -> None:
         from forgejo_kanban_workflow import executed_ci_success
 
-        status = {"status": "success", "target_url": "/nixos/nix-config/actions/runs/23/jobs/0"}
+        status = {"status": "success", "target_url": "/homelab/nix-config/actions/runs/23/jobs/0"}
         for description in (
             None,
             "",
@@ -300,7 +300,7 @@ class ValidationTests(unittest.TestCase):
 
     def test_event_binds_target_identity(self) -> None:
         row = validate_event(event())
-        self.assertEqual(row["logical_key"], "forgejo:nixos/nix-config:pull_request:7")
+        self.assertEqual(row["logical_key"], "forgejo:homelab/nix-config:pull_request:7")
         wrong = event()
         wrong["target"]["url"] = "https://git.example.test/issues/7"
         with self.assertRaises(InputError):
@@ -463,7 +463,7 @@ class ReconcileTests(unittest.TestCase):
 
 class NativeKanbanTests(unittest.TestCase):
     def test_outcome_rejects_ambiguous_anchor_and_wrong_owner_before_writing(self):
-        url = "https://git.example.test/nixos/nix-config/pulls/7"
+        url = "https://git.example.test/homelab/nix-config/pulls/7"
         snapshot = {
             "url": url,
             "number": 7,
@@ -641,7 +641,7 @@ class ForgejoProtocolTests(unittest.TestCase):
             client = ForgejoClient("https://git.example.test", self.credential(Path(tmp)), opener)
             snapshot = client.snapshot(validate_event(event()))
         self.assertEqual(snapshot["reviews"][0]["comments"][0]["id"], 11)
-        self.assertEqual(calls.count("/api/v1/repos/nixos/nix-config/pulls/7"), 2)
+        self.assertEqual(calls.count("/api/v1/repos/homelab/nix-config/pulls/7"), 2)
 
     def test_issue_snapshot_binds_exact_repository_url_and_comments(self) -> None:
         def opener(request, timeout):
@@ -657,7 +657,7 @@ class ForgejoProtocolTests(unittest.TestCase):
             snapshot = client.snapshot(
                 validate_event(event(target_kind="issue", number=4, kind="issue"))
             )
-        self.assertEqual(snapshot["url"], "https://git.example.test/nixos/nix-config/issues/4")
+        self.assertEqual(snapshot["url"], "https://git.example.test/homelab/nix-config/issues/4")
         self.assertEqual(snapshot["comments"][0]["id"], 11)
 
     def test_snapshot_rejects_head_change(self) -> None:
@@ -715,7 +715,7 @@ class ForgejoProtocolTests(unittest.TestCase):
                         "id": 88,
                         "body": body["body"],
                         "user": {"login": "system-admin-agent"},
-                        "html_url": "https://git.example.test/nixos/nix-config/issues/4#issuecomment-88",
+                        "html_url": "https://git.example.test/homelab/nix-config/issues/4#issuecomment-88",
                     }
                 )
                 return FakeResponse(stored[0])
@@ -737,7 +737,7 @@ class ForgejoProtocolTests(unittest.TestCase):
                 "id": 70,
                 "body": body,
                 "user": {"login": "attacker"},
-                "html_url": "https://git.example.test/nixos/nix-config/issues/4#issuecomment-70",
+                "html_url": "https://git.example.test/homelab/nix-config/issues/4#issuecomment-70",
             }
         ]
 
@@ -754,7 +754,7 @@ class ForgejoProtocolTests(unittest.TestCase):
                     "id": 71,
                     "body": json.loads(request.data)["body"],
                     "user": {"login": "system-admin-agent"},
-                    "html_url": "https://git.example.test/nixos/nix-config/issues/4#issuecomment-71",
+                    "html_url": "https://git.example.test/homelab/nix-config/issues/4#issuecomment-71",
                 }
                 stored.append(row)
                 return FakeResponse(row)
@@ -869,7 +869,7 @@ class ForgejoProtocolTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             client = ForgejoClient("https://git.example.test", self.credential(Path(tmp)), opener)
             with self.assertRaisesRegex(RuntimeError, "HTTP 302") as caught:
-                client.get("/repos/nixos/nix-config/issues/1")
+                client.get("/repos/homelab/nix-config/issues/1")
         self.assertNotIn("secret-token", str(caught.exception))
 
 

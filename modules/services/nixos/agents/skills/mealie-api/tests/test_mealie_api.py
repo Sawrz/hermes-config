@@ -28,6 +28,7 @@ class FixtureHandler(BaseHTTPRequestHandler):
     fail_once = set()
     recipe_post_delay = 0.0
     shopping_post_delay = 0.0
+    recipe_put_add_metadata = False
     schema = {
         "openapi": "3.1.0",
         "info": {"title": "Mealie", "version": "3.24.0"},
@@ -322,6 +323,13 @@ class FixtureHandler(BaseHTTPRequestHandler):
         self._record(payload)
         slug = self.path.rsplit("/", 1)[-1]
         record = next(r for r in self.__class__.recipes if r["slug"] == slug)
+        if self.__class__.recipe_put_add_metadata:
+            payload = json.loads(json.dumps(payload))
+            for ingredient in payload.get("recipeIngredient", []):
+                ingredient.setdefault("referenceId", "696f8edb-04df-444a-998c-3a9bc5396266")
+            for step in payload.get("recipeInstructions", []):
+                step.setdefault("id", "311a35e3-8b2c-46db-a3c2-30e0c17ef713")
+                step.setdefault("ingredientReferences", [])
         record.update(payload)
         self._send(200, record)
 
@@ -349,6 +357,7 @@ class MealieApiTest(unittest.TestCase):
         FixtureHandler.fail_once = set()
         FixtureHandler.recipe_post_delay = 0.0
         FixtureHandler.shopping_post_delay = 0.0
+        FixtureHandler.recipe_put_add_metadata = False
         self.tmp = tempfile.TemporaryDirectory()
         root = Path(self.tmp.name)
         self.endpoint = root / "endpoint"
@@ -876,7 +885,187 @@ class MealieApiTest(unittest.TestCase):
         with self.assertRaises(mealie_api.ValidationError):
             client._validate_payload_schema(schema, "POST", "/api/recipes", {"name": 7})
 
-    def test_bounded_schema_rejects_unsupported_nested_shapes_before_confirmation(self):
+    def public_schema(self):
+        return json.loads((Path(__file__).parent / "fixtures" / "mealie-openapi.json").read_text())
+
+    def test_public_schema_complete_recipe_and_meal_plan_write_flows(self):
+        original_schema = FixtureHandler.schema
+        FixtureHandler.schema = self.public_schema()
+        self.addCleanup(setattr, FixtureHandler, "schema", original_schema)
+        FixtureHandler.recipe_put_add_metadata = True
+        client = self.client()
+        recipe_id = "aa72ae89-bd5a-477d-9cf5-4fd38a1a5583"
+
+        def apply(method, path, payload, authority, reconcile=None):
+            preview = client.preview(
+                method, path, payload, authority=authority, reconcile=reconcile
+            )
+            return client.mutate(
+                method,
+                path,
+                payload,
+                authority=authority,
+                reconcile=reconcile,
+                confirm=preview["confirmation"],
+            )
+
+        create = {"name": "Complete Soup"}
+        recipe_match = {"path": "/api/recipes", "query": {}, "match": create}
+        created = apply("POST", "/api/recipes", create, "mealie:recipes", recipe_match)
+        update = {
+            "id": recipe_id,
+            "name": create["name"],
+            "description": None,
+            "recipeServings": 4,
+            "recipeIngredient": [{"note": "2 carrots", "quantity": 2, "unit": None}],
+            "recipeInstructions": [{"text": "Simmer until tender.", "title": None}],
+            "dateAdded": "2026-10-14",
+            "extras": {"source": "family notebook"},
+        }
+        path = f"/api/recipes/{created['slug']}"
+        preview = client.preview("PUT", path, update, authority="mealie:recipes")
+        changed = json.loads(json.dumps(update))
+        changed["recipeInstructions"][0]["text"] = "Changed after approval"
+        with self.assertRaises(mealie_api.ConfirmationRequiredError):
+            client.mutate(
+                "PUT", path, changed, authority="mealie:recipes", confirm=preview["confirmation"]
+            )
+        saved = apply("PUT", path, update, "mealie:recipes")
+        self.assertEqual(saved["id"], recipe_id)
+        self.assertEqual(saved["recipeIngredient"][0]["note"], "2 carrots")
+        self.assertEqual(saved["recipeInstructions"][0]["text"], "Simmer until tender.")
+        self.assertIn("referenceId", saved["recipeIngredient"][0])
+        self.assertIn("id", saved["recipeInstructions"][0])
+        self.assertEqual(FixtureHandler.requests[-1]["method"], "GET")
+        self.assertEqual(FixtureHandler.requests[-1]["path"], path)
+        apply("POST", "/api/recipes", create, "mealie:recipes", recipe_match)
+        self.assertEqual(len(FixtureHandler.recipes), 1)
+
+        plan = {
+            "date": "2026-10-14",
+            "entryType": "dinner",
+            "title": create["name"],
+            "recipeId": recipe_id,
+            "recipeScale": 1.5,
+        }
+        plan_path = "/api/households/mealplans"
+        plan_match = {"path": plan_path, "query": {}, "match": plan}
+        first = apply("POST", plan_path, plan, "mealie:meal_plans", plan_match)
+        second = apply("POST", plan_path, plan, "mealie:meal_plans", plan_match)
+        self.assertEqual(first, second)
+        self.assertEqual(len(FixtureHandler.mealplans), 1)
+        self.assertEqual(first["recipeId"], recipe_id)
+        writes = [r for r in FixtureHandler.requests if r["method"] in {"POST", "PUT"}]
+        self.assertEqual([r["method"] for r in writes], ["POST", "PUT", "POST"])
+        for request in FixtureHandler.requests:
+            self.assertEqual(
+                request["authorization"],
+                None if request["path"] == "/openapi.json" else "Bearer synthetic-token",
+            )
+
+    def test_public_schema_rejects_invalid_recipe_and_meal_plan_payloads(self):
+        original_schema = FixtureHandler.schema
+        FixtureHandler.schema = self.public_schema()
+        self.addCleanup(setattr, FixtureHandler, "schema", original_schema)
+        client = self.client()
+        cases = [
+            ("PUT", "/api/recipes/soup", {"id": "invalid-uuid"}, "mealie:recipes"),
+            (
+                "PUT",
+                "/api/recipes/soup",
+                {"recipeIngredient": [{"quantity": True}]},
+                "mealie:recipes",
+            ),
+            ("PUT", "/api/recipes/soup", {"recipeInstructions": [{}]}, "mealie:recipes"),
+            ("PUT", "/api/recipes/soup", {"recipeInstructions": [{"text": 3}]}, "mealie:recipes"),
+            ("PUT", "/api/recipes/soup", {"dateUpdated": "yesterday"}, "mealie:recipes"),
+            ("PUT", "/api/recipes/soup", {"recipeServings": "four"}, "mealie:recipes"),
+            ("PUT", "/api/recipes/soup", {"unknown": True}, "mealie:recipes"),
+        ]
+        for payload in (
+            {"entryType": "dinner"},
+            {"date": "2026-02-30"},
+            {"date": "2026-10-14", "entryType": "invalid"},
+            {"date": "2026-10-14", "recipeId": "invalid-uuid"},
+            {"date": "2026-10-14", "recipeScale": 0},
+        ):
+            cases.append(("POST", "/api/households/mealplans", payload, "mealie:meal_plans"))
+        for method, path, payload, authority in cases:
+            with self.subTest(payload=payload), self.assertRaises(mealie_api.ValidationError):
+                client.preview(method, path, payload, authority=authority)
+        self.assertFalse(any(r["method"] != "GET" for r in FixtureHandler.requests))
+
+    def test_composition_reference_siblings_and_constraints_are_enforced(self):
+        client = self.client()
+        schema = self.public_schema()
+        schema["components"]["schemas"]["CreateRecipe"] = {
+            "allOf": [
+                {
+                    "type": "object",
+                    "properties": {"name": {"type": "string"}},
+                    "required": ["name"],
+                },
+                {
+                    "properties": {
+                        "probe": {
+                            "$ref": "#/components/schemas/Probe",
+                            "minLength": 3,
+                        }
+                    },
+                    "required": ["probe"],
+                },
+            ]
+        }
+        schema["components"]["schemas"]["Probe"] = {
+            "oneOf": [{"const": "valid"}, {"const": "other"}]
+        }
+
+        def validate(payload):
+            client._validate_payload_schema(schema, "POST", "/api/recipes", payload)
+
+        validate({"name": "Soup", "probe": "valid"})
+        for payload in (
+            {"name": "Soup"},
+            {"name": "Soup", "probe": "invalid"},
+            {"name": "Soup", "probe": "valid", "extra": 1},
+        ):
+            with self.subTest(payload=payload), self.assertRaises(mealie_api.ValidationError):
+                validate(payload)
+        schema["components"]["schemas"]["Probe"] = {"type": "string"}
+        with self.assertRaises(mealie_api.ValidationError):
+            validate({"name": "Soup", "probe": "x"})
+        schema["components"]["schemas"]["Probe"] = {
+            "oneOf": [{"type": "string"}, {"type": "string"}]
+        }
+        with self.assertRaises(mealie_api.ValidationError):
+            validate({"name": "Soup", "probe": "valid"})
+
+    def test_unsafe_or_unknown_schema_features_fail_closed_even_in_absent_fields(self):
+        client = self.client()
+        cases = [
+            {"$ref": "https://example.test/schema"},
+            {"$ref": "file:///etc/passwd"},
+            {"$ref": "#/components/schemas/Missing"},
+            {"$ref": "#/components/schemas/Recipe", "$id": "https://example.test/"},
+            {"type": "string", "format": "unsupported-format"},
+            {"type": "string", "futureConstraint": True},
+            {"type": "object", "properties": []},
+        ]
+        for field_schema in cases:
+            schema = self.public_schema()
+            schema["components"]["schemas"]["CreateRecipe"]["properties"]["absent"] = field_schema
+            with self.subTest(schema=field_schema), self.assertRaises(mealie_api.SchemaDriftError):
+                client._validate_payload_schema(schema, "POST", "/api/recipes", {"name": "Soup"})
+
+    def test_nonproductive_reference_cycle_is_a_typed_schema_error(self):
+        schema = self.public_schema()
+        schema["components"]["schemas"]["CreateRecipe"]["allOf"] = [
+            {"$ref": "#/components/schemas/CreateRecipe"}
+        ]
+        with self.assertRaises(mealie_api.SchemaDriftError):
+            self.client()._validate_payload_schema(schema, "POST", "/api/recipes", {"name": "Soup"})
+
+    def test_schema_rejects_malformed_or_invalid_nested_payloads_before_confirmation(self):
         client = self.client()
         original_schema = FixtureHandler.schema
         cases = {
@@ -897,7 +1086,7 @@ class MealieApiTest(unittest.TestCase):
                     "required": ["count"],
                 },
                 {"count": "not-an-integer"},
-                mealie_api.SchemaDriftError,
+                mealie_api.ValidationError,
             ),
         }
         try:
@@ -921,14 +1110,14 @@ class MealieApiTest(unittest.TestCase):
         finally:
             FixtureHandler.schema = original_schema
 
-    def test_bounded_schema_rejects_unsupported_request_root_keywords_before_confirmation(self):
+    def test_schema_enforces_request_root_constraints_before_confirmation(self):
         client = self.client()
         original_schema = FixtureHandler.schema
         try:
             schema = json.loads(json.dumps(original_schema))
             schema["components"]["schemas"]["Recipe"]["minProperties"] = 2
             FixtureHandler.schema = schema
-            with self.assertRaises(mealie_api.SchemaDriftError):
+            with self.assertRaises(mealie_api.ValidationError):
                 client.preview(
                     "POST",
                     "/api/recipes",
@@ -949,7 +1138,7 @@ class MealieApiTest(unittest.TestCase):
         finally:
             FixtureHandler.schema = original_schema
 
-    def test_recursive_local_ref_schema_is_rejected_as_outside_bounded_contract(self):
+    def test_recursive_local_refs_validate_finite_nested_payloads(self):
         client = self.client()
         schema = json.loads(json.dumps(FixtureHandler.schema))
         schema["components"]["schemas"]["RecursiveRecipe"] = {
@@ -968,14 +1157,17 @@ class MealieApiTest(unittest.TestCase):
         ] = {"$ref": "#/components/schemas/RecursiveRecipe"}
 
         for payload in ({"name": "root"}, {"name": "root", "children": [{"name": "leaf"}]}):
-            with self.subTest(payload=payload), self.assertRaises(mealie_api.SchemaDriftError):
+            with self.subTest(payload=payload):
                 client._validate_payload_schema(
                     schema,
                     "POST",
                     "/api/recipes",
                     payload,
                 )
-        self.assertFalse(hasattr(client, "_value_matches_schema"))
+        with self.assertRaises(mealie_api.ValidationError):
+            client._validate_payload_schema(
+                schema, "POST", "/api/recipes", {"name": "root", "children": [{"name": 3}]}
+            )
 
     def test_request_schema_root_and_composed_types_are_enforced(self):
         client = self.client()
@@ -1000,7 +1192,12 @@ class MealieApiTest(unittest.TestCase):
             schema["paths"]["/api/recipes"]["post"]["requestBody"]["content"]["application/json"][
                 "schema"
             ] = request_schema
-            with self.subTest(name=name), self.assertRaises(mealie_api.SchemaDriftError):
+            error = (
+                mealie_api.ValidationError
+                if name == "ref-with-object-siblings"
+                else mealie_api.SchemaDriftError
+            )
+            with self.subTest(name=name), self.assertRaises(error):
                 client._validate_payload_schema(
                     schema,
                     "POST",
@@ -1112,6 +1309,46 @@ class MealieApiTest(unittest.TestCase):
             )
         with self.assertRaises(mealie_api.ReadbackError):
             self.client()._verify_readback({}, {"requested_null": None})
+
+    def test_nested_readback_allows_generated_metadata_but_checks_all_requested_values(self):
+        payload = {"recipeInstructions": [{"text": "Simmer", "title": None}]}
+        self.client()._verify_readback(
+            {"recipeInstructions": [{"text": "Simmer", "title": None, "id": "generated"}]},
+            payload,
+        )
+        for steps in (
+            [],
+            [{"text": "Simmer"}],
+            [{"text": "Boil", "title": None}],
+            [{"text": "Simmer", "title": None}, {"text": "Extra"}],
+        ):
+            with self.subTest(steps=steps), self.assertRaises(mealie_api.ReadbackError):
+                self.client()._verify_readback({"recipeInstructions": steps}, payload)
+        with self.assertRaises(mealie_api.ReadbackError):
+            self.client()._verify_readback({"quantity": True}, {"quantity": 1})
+
+    def test_recipe_readback_mismatch_is_indeterminate_and_does_not_replay(self):
+        FixtureHandler.recipes = [{"slug": "soup", "name": "Soup"}]
+        client = self.client()
+        payload = {"name": "Soup", "description": "approved"}
+        preview = client.preview("PUT", "/api/recipes/soup", payload, authority="mealie:recipes")
+        original_get = client.get_json
+
+        def changed_readback(path, **kwargs):
+            result = original_get(path, **kwargs)
+            result["description"] = "different"
+            return result
+
+        client.get_json = changed_readback
+        with self.assertRaises(mealie_api.IndeterminateWriteError):
+            client.mutate(
+                "PUT",
+                "/api/recipes/soup",
+                payload,
+                authority="mealie:recipes",
+                confirm=preview["confirmation"],
+            )
+        self.assertEqual(sum(r["method"] == "PUT" for r in FixtureHandler.requests), 1)
 
     def test_post_dispatch_readback_and_reconciliation_failures_stay_indeterminate(self):
         client = self.client(max_retries=0)

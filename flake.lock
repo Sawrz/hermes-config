@@ -13,12 +13,12 @@
         "rev": "17c9d6cdfc60c64f4ee8d306f9bc0b4ccb51481e",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-flake-parts.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-flake-parts.git"
       },
       "original": {
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-flake-parts.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-flake-parts.git"
       }
     },
     "hermes-agent": {
@@ -40,13 +40,13 @@
         "rev": "345cd2b057a452236de401d3534b8502a7465e8d",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-hermes-agent.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-hermes-agent.git"
       },
       "original": {
         "ref": "refs/tags/v2026.9.14",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-hermes-agent.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-hermes-agent.git"
       }
     },
     "home-manager": {
@@ -62,12 +62,12 @@
         "rev": "f404edbfa4117810c96b97048299242fc50e5362",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-home-manager.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-home-manager.git"
       },
       "original": {
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-home-manager.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-home-manager.git"
       }
     },
     "nixpkgs": {
@@ -78,13 +78,13 @@
         "rev": "95ca1e203c0750115fd4a6f17d5a245dfe6b1edd",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-nixpkgs.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-nixpkgs.git"
       },
       "original": {
         "ref": "nixos-26.05",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-nixpkgs.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-nixpkgs.git"
       }
     },
     "nixpkgs-unstable": {
@@ -95,13 +95,13 @@
         "rev": "ef34387ddd751e1ab8857adf4676492d32eb24ec",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-nixpkgs.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-nixpkgs.git"
       },
       "original": {
         "ref": "nixos-unstable",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-nixpkgs.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-nixpkgs.git"
       }
     },
     "npm-lockfile-fix": {
@@ -117,12 +117,12 @@
         "rev": "c6093acb0c0548e0f9b8b3d82918823721930fe8",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-npm-lockfile-fix.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-npm-lockfile-fix.git"
       },
       "original": {
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-npm-lockfile-fix.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-npm-lockfile-fix.git"
       }
     },
     "pyproject-build-systems": {
@@ -146,12 +146,12 @@
         "rev": "62c0d86027edb1c4f39a5facc09876348144f7c9",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-build-system-pkgs.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-build-system-pkgs.git"
       },
       "original": {
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-build-system-pkgs.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-build-system-pkgs.git"
       }
     },
     "pyproject-nix": {
@@ -167,12 +167,12 @@
         "rev": "e3b599ca2e7fcf93d4edf65d7f19bbf6491724f3",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-pyproject.nix.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-pyproject.nix.git"
       },
       "original": {
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-pyproject.nix.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-pyproject.nix.git"
       }
     },
     "root": {
@@ -195,12 +195,12 @@
         "rev": "1ebd41717762d837d5115f7108522c29cdb00fbb",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-sops-nix.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-sops-nix.git"
       },
       "original": {
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-sops-nix.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-sops-nix.git"
       }
     },
     "uv2nix": {
@@ -220,12 +220,12 @@
         "rev": "5a836d395cbf5fc22670eb98dd4aa4fc4d406977",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-uv2nix.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-uv2nix.git"
       },
       "original": {
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@ssh.git.wrzalek.com/nixos/upstream-uv2nix.git"
+        "url": "ssh://git@ssh.git.wrzalek.com/homelab/upstream-uv2nix.git"
       }
     }
   },

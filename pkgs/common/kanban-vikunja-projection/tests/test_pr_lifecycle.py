@@ -9,7 +9,7 @@ from pr_projection_lifecycle import PrLifecycle
 
 HEAD = "a" * 40
 MERGE = "b" * 40
-URL = "https://forge.example.test/nixos/nix-config/pulls/200"
+URL = "https://forge.example.test/homelab/nix-config/pulls/200"
 ANCHOR = "homelab-devops/t_aaaaaaaa"
 
 
@@ -133,7 +133,7 @@ class LifecycleTests(unittest.TestCase):
         self.assertIn("unexecuted-ci:test", task["body"])
         # The latest attempt wins, including a skipped rerun after a success.
         required["description"] = "Successful in 3s"
-        required["target_url"] = "/nixos/nix-config/actions/runs/2306/jobs/2"
+        required["target_url"] = "/homelab/nix-config/actions/runs/2306/jobs/2"
         self.source["statuses"].append({**required, "id": 2, "description": "Has been skipped"})
         self.assertIsNone(self.resolve()[1]["assignee"])
         self.source["statuses"].append({**required, "id": 3})

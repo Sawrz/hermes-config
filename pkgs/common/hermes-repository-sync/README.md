@@ -86,9 +86,9 @@ inventory removes only this profile's owned registry link. It does not delete
 checkouts; native scheduler reconciliation separately removes deselected owned jobs.
 Profiles without a declarative inventory retain the existing private registry contract.
 
-On Alakazam, `system-admin` selects `nixos/nix-config` at `refs/heads/master` and
-`nixos/omanix`, `nixos/nix-containers`, `nixos/family-controls`, and
-`nixos/hermes-config` at `refs/heads/main`, all over the declared Forgejo SSH URLs.
+On Alakazam, `system-admin` selects `homelab/nix-config` at `refs/heads/master` and
+`homelab/omanix`, `homelab/nix-containers`, `homelab/family-controls`, and
+`homelab/hermes-config` at `refs/heads/main`, all over the declared Forgejo SSH URLs.
 Caches appear inside that profile's sandbox as `/workspace/repositories/<repo>`.
 They deliberately do not adopt `/workspace/nix-config` or its implementation
 worktrees: those are writable, human/agent-owned data, not replaceable caches.

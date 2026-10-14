@@ -35,7 +35,7 @@ PACKAGE = ROOT / "pkgs/common/hermes-nix-maintenance"
 def inventory() -> dict:
     return {
         "schema_version": 1,
-        "repository": "nixos/nix-config",
+        "repository": "homelab/nix-config",
         "source_commit": "a" * 40,
         "period": "2026-08",
         "candidates": [
@@ -118,7 +118,7 @@ class ContainerMechanicsTests(unittest.TestCase):
         cur = validate_curation(curation(inv), inv)
         intent = build_issue_intent(inv, cur)
         assert intent is not None
-        self.assertEqual(intent["repository"], "nixos/nix-config")
+        self.assertEqual(intent["repository"], "homelab/nix-config")
         self.assertEqual(intent["source_commit"], "a" * 40)
         self.assertEqual(intent["logical_key"], "nix-config-container-update:2026-08")
         self.assertEqual(len(intent["decisions"]), 2)
@@ -175,19 +175,19 @@ class ContainerMechanicsTests(unittest.TestCase):
             ledger.begin(intent["intent_sha256"], "attempt-1")
             ledger.lost_response(intent["intent_sha256"], "response timeout")
             weak_proof = {
-                "repository": "nixos/nix-config",
+                "repository": "homelab/nix-config",
                 "source_commit": intent["source_commit"],
                 "intent_sha256": intent["intent_sha256"],
                 "target_kind": "issue",
                 "target_number": 200,
-                "target_url": "https://git.example.test/nixos/nix-config/issues/200?wrong=1",
+                "target_url": "https://git.example.test/homelab/nix-config/issues/200?wrong=1",
                 "readback_sha256": "f" * 64,
             }
             with self.assertRaisesRegex(WorkflowError, "canonical issue target"):
                 ledger.acknowledge(intent["intent_sha256"], weak_proof)
             proof = {
                 **weak_proof,
-                "target_url": "https://git.example.test/nixos/nix-config/issues/200",
+                "target_url": "https://git.example.test/homelab/nix-config/issues/200",
             }
             acknowledged = ledger.acknowledge(intent["intent_sha256"], proof)
             self.assertEqual(acknowledged["state"], "acknowledged")
@@ -264,7 +264,7 @@ class WikiPublicationTests(unittest.TestCase):
             "Stale": WikiPage("Stale", "stale"),
         }
         actions = plan_sync(
-            {"Home": source, "Runbooks/Ops": source2}, pages, commit, "nixos/nix-config"
+            {"Home": source, "Runbooks/Ops": source2}, pages, commit, "homelab/nix-config"
         )
         client = FakeWikiClient({"Home": "old", "Stale": "stale"})
         proof = apply_actions(client, actions)
@@ -281,13 +281,13 @@ class WikiPublicationTests(unittest.TestCase):
             "Home",
             "docs/Home.md",
             "missing",
-            action_request("create", page, "Home", "d" * 40, "nixos/nix-config"),
+            action_request("create", page, "Home", "d" * 40, "homelab/nix-config"),
         )
         with self.assertRaisesRegex(WikiSyncError, "readback failed"):
             apply_actions(FakeWikiClient(corrupt_readback=True), [action])
 
     def test_dry_run_manifest_has_no_publication_proof(self) -> None:
-        data = manifest([], "e" * 40, "nixos/nix-config", 0, 0, "dry-run", {}, [])
+        data = manifest([], "e" * 40, "homelab/nix-config", 0, 0, "dry-run", {}, [])
         self.assertEqual(data["publication_proof"], [])
         self.assertEqual(data["counts"]["total"], 0)
 

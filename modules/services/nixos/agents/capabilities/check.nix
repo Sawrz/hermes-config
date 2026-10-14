@@ -79,7 +79,7 @@ let
     custom.services.hermes = {
       managedSourceRepositories.project = {
         root = ../../../../../.;
-        repository = "nixos/hermes-config";
+        repository = "homelab/hermes-config";
         board = "homelab-devops";
         assignee = "system-admin";
       };
@@ -116,14 +116,14 @@ let
           endpoint = "https://git.example.test";
           credentialFiles.credential = "/test-secrets/forgejo";
           capabilities = [ "issue-intake" ];
-          scope.include = [ "nixos/nix-config" ];
+          scope.include = [ "homelab/nix-config" ];
         };
         serviceIntegrations.forgejo-to-kanban.settings = {
           board = "homelab-devops";
           repositories.nix-config = {
             stateSubdirectory = "";
             id = "fixture";
-            repository = "nixos/nix-config";
+            repository = "homelab/nix-config";
             defaultBranch = "master";
             namespace = "nix-config";
             workflowKeyPrefix = "forgejo";
@@ -143,7 +143,7 @@ let
       code-reviewer = {
         externalServices.forgejo = {
           endpoint = "https://git.example.test";
-          scope.include = [ "nixos/nix-config" ];
+          scope.include = [ "homelab/nix-config" ];
         };
         agentSkills.evidence-driven-change-control = true;
         agentSkills.security-sensitive-protocol-review = true;

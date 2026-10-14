@@ -17,8 +17,8 @@
       "lock_timeout_seconds": 0
     },
     "nix-config-pull": {
-      "origin": "ssh://git@git.example.test/nixos/nix-config.git",
-      "repository": "nixos/nix-config",
+      "origin": "ssh://git@git.example.test/homelab/nix-config.git",
+      "repository": "homelab/nix-config",
       "ref": "refs/heads/master",
       "destination": "/var/lib/hermes-repositories/nix-config",
       "transport": "ssh",

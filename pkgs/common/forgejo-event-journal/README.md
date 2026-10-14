@@ -1,6 +1,6 @@
 # Forgejo event journal
 
-This package is the F10 transport boundary for `nixos/nix-config`.
+This package is the F10 transport boundary for `homelab/nix-config`.
 It is deliberately narrower than the workflow reconciler:
 
 - a systemd timer polls the repository with overlap and feeds one crash-safe journal;

@@ -12,7 +12,7 @@ services.hermes-agent.profiles.system-admin = {
     endpoint = "https://git.example.test";
     credentialFiles.credential = config.sops.secrets."...".path;
     capabilities = [ "issue-intake" ];
-    scope.include = [ "nixos/nix-config" ];
+    scope.include = [ "homelab/nix-config" ];
   };
 
   serviceIntegrations.forgejo-to-kanban.settings = {

@@ -14,7 +14,7 @@ spec.loader.exec_module(helper)
 class RequestTests(unittest.TestCase):
     def setUp(self):
         route = {
-            "repository": "nixos/hermes-config",
+            "repository": "homelab/hermes-config",
             "board": "homelab-devops",
             "assignee": "system-admin",
             "mode": "kanban",
@@ -31,7 +31,7 @@ class RequestTests(unittest.TestCase):
                     "source": {
                         "kind": "repository-directory",
                         "path": "skills/example",
-                        "repository": "nixos/hermes-config",
+                        "repository": "homelab/hermes-config",
                         "route": route,
                     },
                     "declarations": [],
@@ -50,18 +50,18 @@ class RequestTests(unittest.TestCase):
 
     def test_reusable_source_routes_to_owner(self):
         plan = self.plan()
-        self.assertIn("Repository: nixos/hermes-config", plan["arguments"]["body"])
+        self.assertIn("Repository: homelab/hermes-config", plan["arguments"]["body"])
         self.assertEqual(plan, self.plan())
 
     def test_wrong_repository_is_rejected(self):
-        self.request["repository"] = "nixos/nix-config"
+        self.request["repository"] = "homelab/nix-config"
         with self.assertRaisesRegex(ValueError, "does not own"):
             self.plan()
 
     def test_same_resource_in_other_repository_has_distinct_key(self):
         first = self.plan()["arguments"]["idempotency_key"]
         source = self.manifest["skills"]["example"]["source"]
-        source["repository"] = source["route"]["repository"] = "nixos/nix-config"
+        source["repository"] = source["route"]["repository"] = "homelab/nix-config"
         self.assertNotEqual(first, self.plan()["arguments"]["idempotency_key"])
 
     def test_profile_selection_routes_to_deployment_declaration(self):
@@ -69,24 +69,24 @@ class RequestTests(unittest.TestCase):
         skill["source"] = {"kind": "inline", "path": None}
         skill["declarations"] = [
             {
-                "repository": "nixos/nix-config",
+                "repository": "homelab/nix-config",
                 "path": "hosts/host.nix",
                 "route": {
-                    "repository": "nixos/nix-config",
+                    "repository": "homelab/nix-config",
                     "board": "homelab-devops",
                     "assignee": "system-admin",
                 },
             }
         ]
-        self.assertIn("Repository: nixos/nix-config", self.plan()["arguments"]["body"])
+        self.assertIn("Repository: homelab/nix-config", self.plan()["arguments"]["body"])
 
     def test_reusable_skill_selection_routes_to_host_without_changing_implementation_owner(self):
         self.manifest["profile_declarations"] = [
             {
-                "repository": "nixos/nix-config",
+                "repository": "homelab/nix-config",
                 "path": "hosts/host.nix",
                 "route": {
-                    "repository": "nixos/nix-config",
+                    "repository": "homelab/nix-config",
                     "board": "homelab-devops",
                     "assignee": "homelab-cto",
                     "mode": "manual",
@@ -94,14 +94,14 @@ class RequestTests(unittest.TestCase):
             }
         ]
         implementation = self.plan()["arguments"]["idempotency_key"]
-        self.request.update(change_target="selection", repository="nixos/nix-config")
+        self.request.update(change_target="selection", repository="homelab/nix-config")
         selection = self.plan()
-        self.assertEqual(selection["repository"], "nixos/nix-config")
+        self.assertEqual(selection["repository"], "homelab/nix-config")
         self.assertIn("hosts/host.nix", selection["body"])
         self.assertNotEqual(selection["idempotency_key"], implementation)
         self.manifest["profile"] = "other-profile"
         self.assertNotEqual(self.plan()["idempotency_key"], selection["idempotency_key"])
-        self.request["repository"] = "nixos/hermes-config"
+        self.request["repository"] = "homelab/hermes-config"
         with self.assertRaisesRegex(ValueError, "does not own"):
             self.plan()
 
@@ -110,7 +110,7 @@ class RequestTests(unittest.TestCase):
         source = skill["source"]
         skill["source"] = {"kind": "inline", "path": None}
         other = copy.deepcopy(source)
-        other["repository"] = other["route"]["repository"] = "nixos/nix-config"
+        other["repository"] = other["route"]["repository"] = "homelab/nix-config"
         skill["declarations"] = [source, other]
         with self.assertRaisesRegex(ValueError, "explicit"):
             self.plan()

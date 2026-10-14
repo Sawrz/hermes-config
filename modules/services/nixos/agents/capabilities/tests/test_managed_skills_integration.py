@@ -58,8 +58,8 @@ def main():
         assert set(manifest["skills"]) == expected[name], manifest
         assert manifest["profile"] == name
         managed = manifest["skills"]["nix-managed-resource-changes"]
-        assert managed["source"]["repository"] == "nixos/hermes-config"
-        assert managed["source"]["route"]["repository"] == "nixos/hermes-config"
+        assert managed["source"]["repository"] == "homelab/hermes-config"
+        assert managed["source"]["route"]["repository"] == "homelab/hermes-config"
         assert managed["provider"] == "agentSkill:nix-managed-resource-changes"
         assert (
             managed["source"]["path"]
