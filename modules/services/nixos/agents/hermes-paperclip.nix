@@ -80,7 +80,9 @@ in
         message = "Hermes Paperclip profiles must use distinct API credentials.";
       }
       {
-        assertion = config.networking.firewall.enable && cfg.allowedClientAddresses != [ ];
+        assertion =
+          cfg.bindAddress == "127.0.0.1"
+          || (config.networking.firewall.enable && cfg.allowedClientAddresses != [ ]);
         message = "Hermes Paperclip APIs require an enabled firewall and explicit allowed client addresses.";
       }
     ];
